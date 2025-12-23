@@ -22,7 +22,7 @@ import { SejongColors } from '@/styles/colors';
 
 export default function ShowcasePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-white">
+    <div className="min-h-screen bg-linear-to-br from-white via-gray-50 to-white">
       {/* Hero Section */}
       <Hero
         badge="완익세종"

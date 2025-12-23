@@ -1,7 +1,7 @@
 import { InputHTMLAttributes, forwardRef, ReactNode } from 'react';
 import { SejongColors } from '@/styles/colors';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -52,9 +52,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'}
               ${className}
             `}
-            style={{
-              focusRingColor: error ? '#EF4444' : SejongColors.primary
-            }}
             {...props}
           />
 
@@ -68,7 +65,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {(error || helperText) && (
           <p
             className={`text-sm mt-1.5 ${
-              error ? 'text-red-500' : 'text-gray-500'
+              error ? 'text-red-500' : 'text-gray-600'
             }`}
           >
             {error || helperText}
@@ -124,16 +121,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'}
             ${className}
           `}
-          style={{
-            focusRingColor: error ? '#EF4444' : SejongColors.primary
-          }}
           {...props}
         />
 
         {(error || helperText) && (
           <p
             className={`text-sm mt-1.5 ${
-              error ? 'text-red-500' : 'text-gray-500'
+              error ? 'text-red-500' : 'text-gray-600'
             }`}
           >
             {error || helperText}
@@ -196,7 +190,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             backgroundRepeat: 'no-repeat',
             backgroundSize: '1.5em 1.5em',
             paddingRight: '2.5rem',
-            focusRingColor: error ? '#EF4444' : SejongColors.primary
           }}
           {...props}
         >
@@ -215,7 +208,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {(error || helperText) && (
           <p
             className={`text-sm mt-1.5 ${
-              error ? 'text-red-500' : 'text-gray-500'
+              error ? 'text-red-500' : 'text-gray-600'
             }`}
           >
             {error || helperText}

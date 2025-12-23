@@ -1,0 +1,141 @@
+{
+  "careerSummary": "AI/ML 엔지니어는 인공지능과 머신러닝 기술을 활용하여 데이터 기반 솔루션을 개발하는 전문가입니다. 이미 머신러닝 기초 과목을 이수하셨고, 웹프로그래밍 역량도 우수하여 좋은 출발점을 가지고 계십니다.",
+  "currentSkills": {
+    "strengths": [
+      "프로그래밍 기초 역량 우수 (프로그래밍기초 A+, 자료구조 A)",
+      "머신러닝 입문 완료 (머신러닝 A)",
+      "웹 개발 역량 보유 (웹프로그래밍 A+)",
+      "데이터베이스 이해도 높음 (데이터베이스 A)",
+      "소프트웨어 공학 기초 탄탄함 (소프트웨어공학 A)"
+    ],
+    "gaps": [
+      "딥러닝 및 고급 AI 기술 학습 필요",
+      "Python 데이터 분석 라이브러리 실습 부족",
+      "실전 프로젝트 경험 필요",
+      "클라우드 및 MLOps 경험 부족",
+      "수학적 기초(선형대수, 확률통계) 보강 필요"
+    ]
+  },
+  "learningPath": [
+    {
+      "period": "2025년 여름방학",
+      "goal": "AI/ML 기초 역량 강화 및 Python 데이터 분석 마스터",
+      "courses": [
+        {
+          "name": "Coursera: Machine Learning Specialization (Andrew Ng)",
+          "type": "외부강의",
+          "reason": "머신러닝의 수학적 기초와 실전 구현을 체계적으로 학습",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "Python 데이터 분석 (Pandas, NumPy, Matplotlib)",
+          "type": "자가학습",
+          "reason": "데이터 전처리 및 시각화 능력 필수",
+          "priority": "high",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "Kaggle 입문 대회 참여 (Titanic, House Prices)",
+        "개인 포트폴리오 프로젝트 1개 완성 (추천 시스템 구현)"
+      ],
+      "effort": "주 20시간 (8주)"
+    },
+    {
+      "period": "2025년 2학기",
+      "goal": "딥러닝 전문 지식 습득 및 AI 프로젝트 경험",
+      "courses": [
+        {
+          "name": "딥러닝",
+          "type": "전공선택",
+          "reason": "신경망, CNN, RNN 등 핵심 딥러닝 기술 학습",
+          "priority": "high",
+          "prerequisites": ["머신러닝"]
+        },
+        {
+          "name": "컴퓨터비전",
+          "type": "전공선택",
+          "reason": "이미지 인식 및 처리 기술은 AI 핵심 응용 분야",
+          "priority": "medium",
+          "prerequisites": ["딥러닝"]
+        },
+        {
+          "name": "빅데이터처리",
+          "type": "전공선택",
+          "reason": "대규모 데이터 처리 능력 필수",
+          "priority": "medium",
+          "prerequisites": ["데이터베이스"]
+        }
+      ],
+      "activities": [
+        "AI 학회 가입 및 스터디 참여",
+        "교내 AI 경진대회 참가",
+        "팀 프로젝트: 실전 AI 서비스 개발"
+      ],
+      "effort": "학기 중 주 15시간"
+    },
+    {
+      "period": "2026년 겨울방학",
+      "goal": "MLOps 및 배포 경험, 포트폴리오 완성",
+      "courses": [
+        {
+          "name": "Docker & Kubernetes 실습",
+          "type": "자가학습",
+          "reason": "AI 모델 배포를 위한 컨테이너 기술 필수",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "AWS/GCP ML 서비스",
+          "type": "외부강의",
+          "reason": "클라우드 기반 ML 파이프라인 구축 능력",
+          "priority": "medium",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "End-to-End ML 프로젝트 (데이터 수집 → 모델링 → 배포)",
+        "GitHub 포트폴리오 정리 및 기술 블로그 작성",
+        "AI 엔지니어 인턴십 지원 준비"
+      ],
+      "effort": "주 25시간 (6주)"
+    },
+    {
+      "period": "2026년 1학기",
+      "goal": "고급 AI 기술 및 연구 경험, 취업 준비",
+      "courses": [
+        {
+          "name": "자연어처리",
+          "type": "전공선택",
+          "reason": "LLM 시대에 필수적인 NLP 기술 학습",
+          "priority": "high",
+          "prerequisites": ["딥러닝"]
+        },
+        {
+          "name": "강화학습",
+          "type": "전공선택",
+          "reason": "최신 AI 연구 트렌드 및 게임/로봇 응용",
+          "priority": "medium",
+          "prerequisites": ["머신러닝"]
+        },
+        {
+          "name": "캡스톤디자인",
+          "type": "전공필수",
+          "reason": "실전 프로젝트로 모든 역량 통합",
+          "priority": "high",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "AI 연구실 인턴 또는 기업 인턴십",
+        "AI 관련 논문 리딩 및 구현",
+        "취업 포트폴리오 및 이력서 완성",
+        "코딩 테스트 준비 (알고리즘 복습)"
+      ],
+      "effort": "학기 중 주 20시간"
+    }
+  ],
+  "advice": "AI/ML 분야는 빠르게 발전하는 분야이므로 지속적인 학습이 중요합니다. Kaggle, GitHub, arXiv 등을 통해 최신 트렌드를 따라가고, 실전 프로젝트를 통해 이론을 실무에 적용하는 경험을 쌓으세요. 또한 수학적 기초(선형대수, 확률통계, 미적분)를 틈틈이 복습하면 고급 AI 기술을 이해하는 데 큰 도움이 됩니다. 네트워킹도 중요하니 학회, 컨퍼런스, 밋업 등에 적극 참여하세요!",
+  "generatedAt": "2025-12-23T10:30:00Z"
+}

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, CSSProperties } from 'react';
 import { SejongColors } from '@/styles/colors';
 
 interface CardProps {
@@ -7,6 +7,7 @@ interface CardProps {
   hover?: boolean;
   shadow?: 'sm' | 'md' | 'lg' | 'xl';
   padding?: 'sm' | 'md' | 'lg';
+  style?: CSSProperties;
 }
 
 const shadowStyles = {
@@ -27,7 +28,8 @@ export function Card({
   className = '',
   hover = false,
   shadow = 'md',
-  padding = 'md'
+  padding = 'md',
+  style
 }: CardProps) {
   return (
     <div
@@ -37,6 +39,7 @@ export function Card({
         ${hover ? 'hover:shadow-xl hover:-translate-y-1' : ''}
         ${className}
       `}
+      style={style}
     >
       {children}
     </div>

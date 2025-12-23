@@ -282,7 +282,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 p-8">
+    <div className="min-h-screen bg-linear-to-br from-white to-gray-50 p-8">
       <div className="max-w-3xl mx-auto">
         {/* 헤더 */}
         <div className="text-center mb-12">
@@ -851,7 +851,7 @@ export default function RoadmapPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 p-8">
+    <div className="min-h-screen bg-linear-to-br from-white to-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
         {!roadmap ? (
           <div>

@@ -145,7 +145,7 @@ export function StatusBadge({ status, showIcon = true }: StatusBadgeProps) {
   const statusConfig = {
     active: {
       label: '진행중',
-      color: 'primary',
+      color: 'primary' as const,
       icon: '🔄'
     },
     pending: {
