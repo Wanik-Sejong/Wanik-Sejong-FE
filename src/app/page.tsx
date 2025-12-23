@@ -82,6 +82,8 @@ export default function HomePage() {
               alt="세종대학교"
               width={300}
               height={300}
+              loading="eager"
+              priority
               className="object-contain mx-auto"
             />
           </div>

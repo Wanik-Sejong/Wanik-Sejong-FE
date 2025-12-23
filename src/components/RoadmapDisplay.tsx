@@ -5,6 +5,7 @@ import { Card } from './ui/Card';
 import { Timeline } from './ui/ProcessFlow';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
+import { Divider } from './ui/Divider';
 import { SejongColors } from '@/styles/colors';
 import type { Roadmap } from '@/lib/types';
 
@@ -35,23 +36,45 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
         icon: ['1️⃣', '2️⃣', '3️⃣', '4️⃣'][index % 4],
         title: phase.period,
         subtitle: phase.goal,
-        description: `
-**추천 과목 (${phase.courses.length}개)**
-${phase.courses
-  .map(
-    (course) =>
-      `• ${course.name} (${course.type})${course.priority ? ' - ' + PRIORITY_LABELS[course.priority] : ''}`
-  )
-  .join('\n')}
+        description: (
+          <div className="space-y-4">
+            {/* 추천 과목 섹션 */}
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-2">
+                추천 과목 ({phase.courses.length}개)
+              </h4>
+              <ul className="space-y-2 text-sm">
+                {phase.courses.map((course, idx) => (
+                  <li key={idx} className="text-gray-700">
+                    • {course.name} ({course.type})
+                    {course.priority && ` - ${PRIORITY_LABELS[course.priority]}`}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-${
-  phase.activities && phase.activities.length > 0
-    ? `\n**추가 활동**\n${phase.activities.map((act) => `• ${act}`).join('\n')}`
-    : ''
-}
+            {/* 추가 활동 섹션 (있는 경우) */}
+            {phase.activities && phase.activities.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-2">추가 활동</h4>
+                <ul className="space-y-1 text-sm">
+                  {phase.activities.map((activity, idx) => (
+                    <li key={idx} className="text-gray-700">
+                      • {activity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
-        `.trim(),
+            {/* 예상 학습량 */}
+            {phase.effort && (
+              <p className="text-sm font-medium text-gray-600">
+                예상 학습량: {phase.effort}
+              </p>
+            )}
+          </div>
+        ),
         date: phase.effort,
         status: (index === 0 ? 'active' : index < learningPath.length - 1 ? 'pending' : 'pending') as
           | 'active'
@@ -62,13 +85,13 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
   );
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-12">
+    <div className="w-full max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <div className="text-center">
+      <div className="text-center py-8">
         <h1 className="text-4xl font-bold mb-4" style={{ color: SejongColors.primary }}>
           나만의 학습 로드맵
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-lg">
           AI가 분석한 맞춤형 커리어 로드맵입니다
         </p>
         <p className="text-sm text-gray-500 mt-2">
@@ -76,27 +99,33 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
         </p>
       </div>
 
+      <Divider variant="gradient" spacing="lg" />
+
       {/* Career Summary */}
-      <Card shadow="xl" padding="lg">
-        <div>
-          <h2 className="text-2xl font-bold mb-3" style={{ color: SejongColors.primary }}>
-            진로 요약
-          </h2>
-          <p className="text-gray-700 leading-relaxed">{careerSummary}</p>
-        </div>
-      </Card>
+      <section>
+        <Card shadow="xl" padding="lg">
+          <div>
+            <h2 className="text-2xl font-bold mb-4" style={{ color: SejongColors.primary }}>
+              📊 진로 요약
+            </h2>
+            <p className="text-gray-700 leading-relaxed text-base">{careerSummary}</p>
+          </div>
+        </Card>
+      </section>
 
       {/* Current Skills Analysis */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Strengths */}
         <Card shadow="lg" padding="lg" className="border-l-4" style={{ borderLeftColor: SejongColors.primary }}>
-          <h3 className="text-xl font-bold mb-4" style={{ color: SejongColors.primary }}>
+          <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: SejongColors.primary }}>
+            <span>💪</span>
             현재 강점
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {currentSkills.strengths.map((strength, index) => (
-              <li key={index} className="text-gray-700">
-                {strength}
+              <li key={index} className="text-gray-700 flex items-start gap-2">
+                <span className="text-green-500 mt-1">✓</span>
+                <span>{strength}</span>
               </li>
             ))}
           </ul>
@@ -104,23 +133,28 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
 
         {/* Gaps */}
         <Card shadow="lg" padding="lg" className="border-l-4" style={{ borderLeftColor: SejongColors.gold }}>
-          <h3 className="text-xl font-bold mb-4" style={{ color: SejongColors.gold }}>
+          <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: SejongColors.gold }}>
+            <span>🎯</span>
             보완 필요 영역
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {currentSkills.gaps.map((gap, index) => (
-              <li key={index} className="text-gray-700">
-                {gap}
+              <li key={index} className="text-gray-700 flex items-start gap-2">
+                <span className="text-amber-500 mt-1">→</span>
+                <span>{gap}</span>
               </li>
             ))}
           </ul>
         </Card>
-      </div>
+      </section>
+
+      <Divider variant="gradient" spacing="xl" />
 
       {/* Learning Path Timeline */}
-      <div>
+      <section>
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-3" style={{ color: SejongColors.primary }}>
+          <h2 className="text-3xl font-bold mb-3 flex items-center justify-center gap-2" style={{ color: SejongColors.primary }}>
+            <span>🗺️</span>
             추천 학습 경로
           </h2>
           <p className="text-gray-600">
@@ -129,13 +163,21 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
         </div>
 
         <Timeline items={timelineItems} />
-      </div>
+      </section>
+
+      <Divider variant="gradient" spacing="xl" />
 
       {/* Detailed Course Recommendations */}
-      <div>
-        <h2 className="text-2xl font-bold mb-6 text-center" style={{ color: SejongColors.primary }}>
-          상세 과목 정보
-        </h2>
+      <section>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold mb-3 flex items-center justify-center gap-2" style={{ color: SejongColors.primary }}>
+            <span>📚</span>
+            상세 과목 정보
+          </h2>
+          <p className="text-gray-600 text-sm">
+            각 학기별 추천 과목과 우선순위를 확인하세요
+          </p>
+        </div>
 
         <div className="space-y-6">
           {learningPath.map((phase, phaseIndex) => (
@@ -154,7 +196,7 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
                 {phase.courses.map((course, courseIndex) => (
                   <div
                     key={courseIndex}
-                    className="p-4 bg-gray-50 rounded-lg border-l-4"
+                    className="p-4 bg-gray-50 rounded-lg border-l-4 hover:bg-gray-100 transition-colors"
                     style={{
                       borderLeftColor: course.priority
                         ? PRIORITY_COLORS[course.priority]
@@ -163,7 +205,7 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="font-semibold text-gray-800">{course.name}</h4>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0 ml-2">
                         <Badge variant="secondary" size="sm">
                           {course.type}
                         </Badge>
@@ -195,39 +237,47 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
             </Card>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Additional Advice */}
       {advice && (
-        <Card shadow="xl" padding="lg" className="bg-linear-to-br from-primary-50 to-white">
-          <div>
-            <h3 className="text-2xl font-bold mb-4" style={{ color: SejongColors.primary }}>
-              추가 조언
-            </h3>
-            <p className="text-gray-700 leading-relaxed">{advice}</p>
-          </div>
-        </Card>
+        <>
+          <Divider variant="gradient" spacing="xl" />
+          <section>
+            <Card shadow="xl" padding="lg" className="bg-linear-to-br from-primary-50 to-white">
+              <div>
+                <h3 className="text-2xl font-bold mb-4 flex items-center gap-2" style={{ color: SejongColors.primary }}>
+                  <span>💡</span>
+                  추가 조언
+                </h3>
+                <p className="text-gray-700 leading-relaxed">{advice}</p>
+              </div>
+            </Card>
+          </section>
+        </>
       )}
 
+      <Divider variant="gradient" spacing="xl" />
+
       {/* Action Buttons */}
-      <div className="flex justify-center gap-4 pt-8">
+      <section className="flex justify-center gap-4">
         <Button variant="outline" size="lg" onClick={() => window.print()}>
-          PDF로 저장
+          📄 PDF로 저장
         </Button>
         {onReset && (
           <Button variant="primary" size="lg" onClick={onReset}>
-            새 로드맵 생성
+            🔄 새 로드맵 생성
           </Button>
         )}
-      </div>
+      </section>
 
       {/* Footer Note */}
-      <div className="text-center text-sm text-gray-500 pb-8">
-        <p>
-          이 로드맵은 AI가 생성한 추천사항입니다. 실제 수강 계획은 담당 교수님 및 학과
-          사무실과 상담하여 결정하세요.
+      <footer className="text-center text-sm text-gray-500 pb-8">
+        <p className="leading-relaxed">
+          💡 이 로드맵은 AI가 생성한 추천사항입니다.<br />
+          실제 수강 계획은 담당 교수님 및 학과 사무실과 상담하여 결정하세요.
         </p>
-      </div>
+      </footer>
     </div>
   );
 }

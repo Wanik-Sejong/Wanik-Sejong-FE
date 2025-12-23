@@ -370,61 +370,153 @@ export default function HomePage() {
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import * as XLSX from 'xlsx';
+import * as xlsx from 'xlsx';
+import type { TranscriptData, Course, ParseExcelResponse } from '@/lib/types';
 
+/**
+ * POST /api/parse-excel
+ * Parse Excel transcript file and extract course data
+ */
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
     if (!file) {
-      return NextResponse.json(
-        { error: '파일이 없습니다' },
+      return NextResponse.json<ParseExcelResponse>(
+        { success: false, error: '파일이 업로드되지 않았습니다.' },
         { status: 400 }
       );
     }
 
-    // 파일을 ArrayBuffer로 읽기
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // XLSX 파싱
-    const workbook = XLSX.read(buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-
-    // JSON으로 변환
-    const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-    // 헤더 3행 스킵, 과목명 추출
-    const courses: string[] = [];
-
-    for (let i = 3; i < data.length; i++) {
-      const row = data[i] as any[];
-      if (row && row.length > 4) {
-        const courseName = row[4]; // 교과목명은 5번째 컬럼 (index 4)
-        if (courseName && typeof courseName === 'string') {
-          courses.push(courseName.trim());
-        }
-      }
+    // Validate file type
+    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+      return NextResponse.json<ParseExcelResponse>(
+        { success: false, error: '엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.' },
+        { status: 400 }
+      );
     }
 
-    // 중복 제거
-    const uniqueCourses = Array.from(new Set(courses));
+    // Read file as buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
 
-    return NextResponse.json({
+    // Parse Excel file
+    const workbook = xlsx.read(buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+
+    // Convert to JSON
+    const rawData: any[] = xlsx.utils.sheet_to_json(worksheet);
+
+    if (!rawData || rawData.length === 0) {
+      return NextResponse.json<ParseExcelResponse>(
+        { success: false, error: '엑셀 파일에 데이터가 없습니다.' },
+        { status: 400 }
+      );
+    }
+
+    // Parse transcript data
+    const transcriptData = parseTranscriptData(rawData);
+
+    return NextResponse.json<ParseExcelResponse>({
       success: true,
-      courses: uniqueCourses,
-      count: uniqueCourses.length
+      data: transcriptData,
+      message: '성적표 파싱 완료',
     });
-
   } catch (error) {
-    console.error('엑셀 파싱 에러:', error);
-    return NextResponse.json(
-      { error: '엑셀 파싱 실패' },
+    console.error('Parse Excel error:', error);
+    return NextResponse.json<ParseExcelResponse>(
+      { success: false, error: '파일 파싱 중 오류가 발생했습니다.' },
       { status: 500 }
     );
   }
+}
+
+/**
+ * Parse raw Excel data into TranscriptData structure
+ */
+function parseTranscriptData(rawData: any[]): TranscriptData {
+  const courses: Course[] = [];
+  let totalCredits = 0;
+  let totalMajorCredits = 0;
+  let totalGeneralCredits = 0;
+  let totalGradePoints = 0;
+
+  // Parse each row as a course
+  for (const row of rawData) {
+    // Skip header rows or empty rows
+    if (!row['과목명'] && !row['교과목명']) continue;
+
+    const courseName = row['과목명'] || row['교과목명'];
+    const credits = parseFloat(row['학점'] || row['이수학점'] || '0');
+    const courseType = row['구분'] || row['이수구분'] || '기타';
+    const grade = row['성적'] || row['등급'] || '';
+
+    if (!courseName) continue;
+
+    const course: Course = {
+      courseCode: row['학수번호'] || '',
+      courseName,
+      courseType,
+      teachingArea: row['교직영역'] || null,
+      selectedArea: row['선택영역'] || null,
+      credits,
+      evaluationType: row['평가방식'] || '절대평가',
+      grade,
+      gradePoint: parseGradePoint(row['평점'] || grade),
+      departmentCode: row['개설학과코드'] || null,
+    };
+
+    courses.push(course);
+    totalCredits += credits;
+    totalGradePoints += course.gradePoint * credits;
+
+    // Categorize credits
+    if (courseType.includes('전공')) {
+      totalMajorCredits += credits;
+    } else if (courseType.includes('교양')) {
+      totalGeneralCredits += credits;
+    }
+  }
+
+  // Calculate average GPA
+  const averageGPA = totalCredits > 0
+    ? Math.round((totalGradePoints / totalCredits) * 100) / 100
+    : 0;
+
+  return {
+    courses,
+    totalCredits,
+    totalMajorCredits,
+    totalGeneralCredits,
+    averageGPA,
+  };
+}
+
+/**
+ * Convert grade letter to grade point
+ * @param grade Grade letter (A+, A, B+, etc.) or numeric grade point
+ * @returns Grade point value (0.0 - 4.5)
+ */
+function parseGradePoint(grade: string | number): number {
+  // If already a number, return it
+  if (typeof grade === 'number') return grade;
+
+  // Convert string to number if possible
+  const numericGrade = parseFloat(grade);
+  if (!isNaN(numericGrade)) return numericGrade;
+
+  // Grade letter to grade point mapping (4.5 scale)
+  const gradeMap: Record<string, number> = {
+    'A+': 4.5, 'A': 4.0,
+    'B+': 3.5, 'B': 3.0,
+    'C+': 2.5, 'C': 2.0,
+    'D+': 1.5, 'D': 1.0,
+    'F': 0.0, 'P': 0.0, 'NP': 0.0,
+  };
+
+  return gradeMap[grade.toUpperCase()] || 0.0;
 }
 ```
 
@@ -433,23 +525,96 @@ export async function POST(request: NextRequest) {
 **`src/lib/types.ts`**
 
 ```typescript
+/**
+ * Course information from Excel transcript
+ */
+export interface Course {
+  courseCode: string;             // 학수번호
+  courseName: string;             // 교과목명
+  courseType: string;             // 이수구분 (전공필수, 전공선택, 교양필수 등)
+  teachingArea?: string | null;   // 교직영역 (교직이론, 교직소양, 교육실습)
+  selectedArea?: string | null;   // 선택영역
+  credits: number;                // 학점
+  evaluationType: string;         // 평가방식 (절대평가, 상대평가)
+  grade: string;                  // 등급 (A+, A, B+ 등)
+  gradePoint: number;             // 평점 (4.5 만점)
+  departmentCode?: string | null; // 개설학과코드
+}
+
+/**
+ * Parsed transcript data from Excel
+ */
+export interface TranscriptData {
+  courses: Course[];              // 이수 과목 리스트
+  totalCredits: number;           // 총 학점
+  totalMajorCredits?: number;     // 전공 총 학점
+  totalGeneralCredits?: number;   // 교양 총 학점
+  averageGPA?: number;            // 평균 평점 (4.5 만점)
+}
+
+/**
+ * Career goal input from user
+ */
+export interface CareerGoal {
+  careerPath: string;             // 희망 진로
+  interests?: string[];           // 관심 분야
+  additionalInfo?: string;        // 추가 정보
+}
+
+/**
+ * Roadmap generation request
+ */
 export interface RoadmapRequest {
-  courses: string[];
-  career: string;
-  remainingSemesters: number;
-  department?: string;
+  transcript: TranscriptData;     // 이수 과목 데이터 (변경: courses → transcript)
+  careerGoal: CareerGoal;         // 진로 목표
 }
 
-export interface RoadmapResponse {
-  roadmap: string;  // 마크다운 형식
+/**
+ * API Response wrapper
+ */
+export interface ApiResponse<T> {
   success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
 }
 
-export interface ParsedCourse {
-  courseName: string;
-  category?: string;
-  grade?: string;
+/**
+ * Parse Excel API response
+ */
+export type ParseExcelResponse = ApiResponse<TranscriptData>;
+
+/**
+ * Generate Roadmap API response
+ */
+export interface Roadmap {
+  careerSummary: string;          // 진로 요약
+  currentSkills: {
+    strengths: string[];
+    gaps: string[];
+  };
+  learningPath: RoadmapPhase[];   // 추천 학습 경로
+  advice?: string;                // 추가 조언
+  generatedAt: string;            // 생성 일시
 }
+
+export interface RoadmapPhase {
+  period: string;                 // 기간 (예: "2025년 1학기")
+  goal: string;                   // 목표
+  courses: RecommendedCourse[];   // 추천 과목
+  activities?: string[];          // 추가 활동
+  effort?: string;                // 예상 학습량
+}
+
+export interface RecommendedCourse {
+  name: string;                   // 과목명
+  type: string;                   // 과목 유형
+  reason: string;                 // 이유
+  priority?: 'high' | 'medium' | 'low';
+  prerequisites?: string[];       // 선수 과목
+}
+
+export type GenerateRoadmapResponse = ApiResponse<Roadmap>;
 ```
 
 ---
@@ -468,18 +633,29 @@ export const openai = new OpenAI({
 });
 
 export async function generateRoadmap(
-  courses: string[],
-  career: string,
-  remainingSemesters: number,
-  department: string = '컴퓨터공학과'
+  transcript: TranscriptData,
+  careerGoal: CareerGoal
 ): Promise<string> {
+  // 이수 과목 요약 생성
+  const courseList = transcript.courses
+    .map((c) => `- ${c.courseName} (${c.credits}학점, ${c.courseType}, ${c.grade})`)
+    .join('\n');
+
   const prompt = `당신은 대학생 진로 설계 전문가입니다.
 
 [학생 정보]
-- 전공: ${department}
-- 이수한 과목들: ${courses.join(', ')}
-- 희망 진로: ${career}
-- 남은 학기: ${remainingSemesters}학기
+- 총 이수 학점: ${transcript.totalCredits}학점
+- 전공 학점: ${transcript.totalMajorCredits || 0}학점
+- 교양 학점: ${transcript.totalGeneralCredits || 0}학점
+- 평균 평점: ${transcript.averageGPA?.toFixed(2) || 'N/A'}/4.5
+
+[이수한 과목들]
+${courseList}
+
+[희망 진로]
+- 진로: ${careerGoal.careerPath}
+${careerGoal.interests ? `- 관심 분야: ${careerGoal.interests.join(', ')}` : ''}
+${careerGoal.additionalInfo ? `- 추가 정보: ${careerGoal.additionalInfo}` : ''}
 
 위 정보를 바탕으로 학기별, 방학별 로드맵을 만들어주세요.
 
@@ -539,17 +715,17 @@ import type { RoadmapRequest } from '@/lib/types';
 export async function POST(request: NextRequest) {
   try {
     const body: RoadmapRequest = await request.json();
-    const { courses, career, remainingSemesters, department } = body;
+    const { transcript, careerGoal } = body;
 
     // 입력 검증
-    if (!courses || courses.length === 0) {
+    if (!transcript || !transcript.courses || transcript.courses.length === 0) {
       return NextResponse.json(
         { error: '이수 과목 정보가 없습니다' },
         { status: 400 }
       );
     }
 
-    if (!career) {
+    if (!careerGoal || !careerGoal.careerPath) {
       return NextResponse.json(
         { error: '희망 진로를 입력해주세요' },
         { status: 400 }
@@ -557,20 +733,16 @@ export async function POST(request: NextRequest) {
     }
 
     // AI 로드맵 생성
-    const roadmap = await generateRoadmap(
-      courses,
-      career,
-      remainingSemesters,
-      department
-    );
+    const roadmap = await generateRoadmap(transcript, careerGoal);
 
     return NextResponse.json({
       success: true,
       roadmap,
       metadata: {
-        coursesCount: courses.length,
-        career,
-        remainingSemesters,
+        coursesCount: transcript.courses.length,
+        totalCredits: transcript.totalCredits,
+        averageGPA: transcript.averageGPA,
+        career: careerGoal.careerPath,
         generatedAt: new Date().toISOString()
       }
     });
@@ -981,16 +1153,37 @@ const ROADMAP_PROMPT = `당신은 대학생 진로 설계 전문가입니다.
 ### 엑셀 파싱 핵심 로직
 
 ```typescript
-// XLSX 파일 읽기
-const workbook = XLSX.read(buffer, { type: 'buffer' });
-const sheet = workbook.Sheets[workbook.SheetNames[0]];
-const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+// XLSX 파일 읽기 (컬럼명 기반 JSON 변환)
+const workbook = xlsx.read(buffer, { type: 'buffer' });
+const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+const rawData = xlsx.utils.sheet_to_json(worksheet);
 
-// 헤더 3행 스킵, 과목명 추출 (5번째 컬럼)
-const courses = data
-  .slice(3)
-  .map(row => row[4])
-  .filter(name => name && typeof name === 'string');
+// Course 객체 배열로 파싱
+const courses: Course[] = rawData.map(row => ({
+  courseCode: row['학수번호'] || '',
+  courseName: row['과목명'] || row['교과목명'],
+  courseType: row['구분'] || row['이수구분'],
+  teachingArea: row['교직영역'] || null,
+  selectedArea: row['선택영역'] || null,
+  credits: parseFloat(row['학점'] || '0'),
+  evaluationType: row['평가방식'] || '절대평가',
+  grade: row['성적'] || row['등급'],
+  gradePoint: parseGradePoint(row['평점'] || row['등급']),
+  departmentCode: row['개설학과코드'] || null,
+}));
+
+// GPA 자동 계산
+const totalGradePoints = courses.reduce((sum, c) => sum + (c.gradePoint * c.credits), 0);
+const totalCredits = courses.reduce((sum, c) => sum + c.credits, 0);
+const averageGPA = Math.round((totalGradePoints / totalCredits) * 100) / 100;
+
+// 전공/교양 학점 분류
+const totalMajorCredits = courses
+  .filter(c => c.courseType.includes('전공'))
+  .reduce((sum, c) => sum + c.credits, 0);
+const totalGeneralCredits = courses
+  .filter(c => c.courseType.includes('교양'))
+  .reduce((sum, c) => sum + c.credits, 0);
 ```
 
 ---

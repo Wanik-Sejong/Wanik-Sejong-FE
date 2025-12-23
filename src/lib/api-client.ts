@@ -28,7 +28,8 @@ export async function parseExcel(file: File): Promise<ParseExcelResponse> {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch('/api/parse-excel', {
+    const apiUrl = `${config.api.baseUrl}/api/parse-excel`;
+    const response = await fetch(apiUrl, {
       method: 'POST',
       body: formData,
     });
@@ -64,7 +65,8 @@ export async function generateRoadmap(
 
   // Production mode: Call real API
   try {
-    const response = await fetch('/api/generate-roadmap', {
+    const apiUrl = `${config.api.baseUrl}/api/generate-roadmap`;
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

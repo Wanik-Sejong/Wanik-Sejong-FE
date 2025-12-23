@@ -116,7 +116,7 @@ interface TimelineItemProps {
   icon: ReactNode;
   title: string;
   subtitle?: string;
-  description: string;
+  description: ReactNode;
   date?: string;
   status?: 'completed' | 'active' | 'pending';
 }
@@ -184,9 +184,9 @@ export function Timeline({ items }: TimelineProps) {
                 )}
               </div>
 
-              <p className="text-gray-700 leading-relaxed">
+              <div className="text-gray-700 leading-relaxed">
                 {item.description}
-              </p>
+              </div>
             </div>
           </div>
         );
