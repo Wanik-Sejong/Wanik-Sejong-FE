@@ -298,7 +298,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 text-sm text-gray-500">
               <span>20011650 홍의민</span>
               <span className="hidden sm:inline">•</span>
-              <span>23011818 아정연</span>
+              <span>23011818 이정연</span>
               <span className="hidden sm:inline">•</span>
               <span>21011606 박성열</span>
             </div>

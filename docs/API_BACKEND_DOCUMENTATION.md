@@ -211,6 +211,7 @@ curl -X POST "https://hackathon.yeo-li.com/api/parse-excel" \
   currentSkills: CurrentSkills;               // 현재 역량 분석
   coursePlan: CoursePlan[];                   // 학기별 수강 계획
   extracurricularPlan: ExtracurricularPlan[]; // 비교과 활동 계획
+  recommendedTechStack: string[];             // AI 추천 기술스택 목록
   advice: string;                             // 추가 조언
   generatedAt: string;                        // 생성 일시
   subjectRecommendations: SubjectRecommendations; // 과목 추천
@@ -342,6 +343,16 @@ curl -X POST "https://hackathon.yeo-li.com/api/parse-excel" \
         "activities": ["백엔드 개발 인턴십", "오픈소스 프로젝트 기여"],
         "effort": "주 20시간"
       }
+    ],
+    "recommendedTechStack": [
+      "Spring Boot",
+      "PostgreSQL",
+      "Redis",
+      "Docker",
+      "AWS EC2",
+      "Jenkins",
+      "JUnit 5",
+      "Git"
     ],
     "advice": "Spring Boot 공식 문서를 참고하여 실습 프로젝트를 진행하세요.",
     "generatedAt": "2025-12-24T10:30:00Z",
@@ -635,6 +646,7 @@ const scoreResult = await scoreResponse.json();
   - `/api/subjects/score`: 과목 점수 평가 엔드포인트 추가
   - Course 모델에 `completedYear`, `completedSemester` 필드 추가
   - 모든 데이터 타입을 실제 백엔드 스키마에 맞게 조정 (int32, double 등)
+  - **recommendedTechStack 필드 추가**: AI가 추천하는 기술스택 목록 (string[])
 
 ---
 
