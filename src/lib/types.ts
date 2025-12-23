@@ -84,6 +84,8 @@ export interface Roadmap {
   advice?: string;
   /** 생성 일시 (Generated timestamp) */
   generatedAt: string;
+  /** AI 추천 과목 목록 (AI-recommended subjects with scores) */
+  recommendedSubjects?: RecommendedSubject[];
 }
 
 /**
@@ -118,6 +120,35 @@ export interface RecommendedCourse {
   priority?: 'high' | 'medium' | 'low';
   /** 선수 과목 (Prerequisites - optional) */
   prerequisites?: string[];
+}
+
+/**
+ * AI-recommended subject with score
+ * Converted from backend ScoredSubject
+ */
+export interface RecommendedSubject {
+  /** 학수번호 (Course code) */
+  courseCode: string;
+  /** 교과목명 (Course name) */
+  courseName: string;
+  /** 이수구분 (Course type) */
+  courseType: string;
+  /** 선택영역 (Selected area) */
+  selectedArea: string | null;
+  /** 학점 (Credits) */
+  credits: number;
+  /** 학년 (Grade level) */
+  gradeLevel: number;
+  /** AI 점수 (AI-generated score) */
+  score: number;
+  /** 추천 이유 (Recommendation reasons) */
+  reasons: string[];
+  /** 개설학과전공 (Offering department/major) */
+  offeringDepartmentMajor?: string;
+  /** 강의언어 (Lecture language) */
+  lectureLanguage?: string;
+  /** 수업형태 (Course format) */
+  courseFormat?: string;
 }
 
 /**
