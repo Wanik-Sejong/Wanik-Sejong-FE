@@ -53,6 +53,10 @@ interface StatCardProps {
   icon?: ReactNode;
   trend?: 'up' | 'down';
   trendValue?: string;
+  gradient?: boolean;
+  gradientFrom?: string;
+  gradientTo?: string;
+  hoverEffect?: 'lift' | 'glow' | 'scale';
 }
 
 export function StatCard({
@@ -61,27 +65,62 @@ export function StatCard({
   description,
   icon,
   trend,
-  trendValue
+  trendValue,
+  gradient = false,
+  gradientFrom = SejongColors.primary,
+  gradientTo = SejongColors.secondary,
+  hoverEffect = 'lift'
 }: StatCardProps) {
+  const hoverEffectClasses = {
+    lift: 'hover:shadow-xl hover:-translate-y-1',
+    glow: 'hover:shadow-2xl',
+    scale: 'hover:scale-105'
+  };
+
   return (
-    <Card hover shadow="lg" className="relative overflow-hidden">
+    <div
+      className={`
+        relative overflow-hidden rounded-2xl shadow-lg p-8
+        transition-all duration-300 cursor-pointer
+        ${hoverEffectClasses[hoverEffect]}
+      `}
+      style={
+        gradient
+          ? {
+              background: `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientTo} 100%)`,
+            }
+          : { backgroundColor: 'white' }
+      }
+    >
       {/* Background Pattern */}
-      <div
-        className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: SejongColors.primary }}
-      />
+      {!gradient && (
+        <div
+          className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10"
+          style={{ backgroundColor: SejongColors.primary }}
+        />
+      )}
+
+      {/* Gradient Overlay Effect */}
+      {gradient && (
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-32 h-32 rounded-full blur-2xl bg-white" />
+          <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full blur-2xl bg-white" />
+        </div>
+      )}
 
       <div className="relative z-10">
         {icon && (
-          <div className="mb-4 text-4xl">{icon}</div>
+          <div className={`mb-4 text-4xl ${gradient ? 'opacity-90' : ''}`}>{icon}</div>
         )}
 
-        <h3 className="text-sm font-medium text-gray-600 mb-2">{title}</h3>
+        <h3 className={`text-sm font-medium mb-2 ${gradient ? 'text-white/90' : 'text-gray-600'}`}>
+          {title}
+        </h3>
 
         <div className="flex items-baseline gap-2">
           <p
-            className="text-3xl font-bold"
-            style={{ color: SejongColors.primary }}
+            className={`text-3xl font-bold ${gradient ? 'text-white' : ''}`}
+            style={gradient ? {} : { color: SejongColors.primary }}
           >
             {value}
           </p>
@@ -89,7 +128,11 @@ export function StatCard({
           {trend && trendValue && (
             <span
               className={`text-sm font-medium ${
-                trend === 'up' ? 'text-green-600' : 'text-red-600'
+                gradient
+                  ? 'text-white/80'
+                  : trend === 'up'
+                  ? 'text-green-600'
+                  : 'text-red-600'
               }`}
             >
               {trend === 'up' ? '↑' : '↓'} {trendValue}
@@ -98,25 +141,33 @@ export function StatCard({
         </div>
 
         {description && (
-          <p className="text-sm text-gray-500 mt-2">{description}</p>
+          <p className={`text-sm mt-2 ${gradient ? 'text-white/80' : 'text-gray-500'}`}>
+            {description}
+          </p>
         )}
       </div>
-    </Card>
+    </div>
   );
 }
 
 interface FeatureCardProps {
   icon: ReactNode;
   title: string;
-  description: string;
+  description?: string;
+  content?: ReactNode;
+  items?: string[];
   accent?: 'primary' | 'secondary' | 'gold';
+  align?: 'left' | 'center';
 }
 
 export function FeatureCard({
   icon,
   title,
   description,
-  accent = 'primary'
+  content,
+  items,
+  accent = 'primary',
+  align = 'center'
 }: FeatureCardProps) {
   const accentColors = {
     primary: SejongColors.primary,
@@ -130,11 +181,18 @@ export function FeatureCard({
     gold: SejongColors.gold50
   };
 
+  const alignmentClasses = {
+    left: 'text-left',
+    center: 'text-center'
+  };
+
   return (
-    <Card hover shadow="lg" className="text-center">
+    <Card hover shadow="lg" className={alignmentClasses[align]}>
       {/* Icon Circle */}
       <div
-        className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center text-4xl"
+        className={`w-20 h-20 mb-6 rounded-full flex items-center justify-center text-4xl ${
+          align === 'center' ? 'mx-auto' : ''
+        }`}
         style={{ backgroundColor: bgColors[accent] }}
       >
         {icon}
@@ -147,7 +205,27 @@ export function FeatureCard({
         {title}
       </h3>
 
-      <p className="text-gray-600 leading-relaxed">{description}</p>
+      {description && (
+        <p className="text-gray-600 leading-relaxed mb-4">{description}</p>
+      )}
+
+      {content && <div className="mt-4">{content}</div>}
+
+      {items && items.length > 0 && (
+        <ul className="space-y-3 mt-4">
+          {items.map((item, index) => (
+            <li key={index} className="text-gray-700 flex items-start gap-3">
+              <span
+                className="mt-1 text-lg shrink-0"
+                style={{ color: accentColors[accent] }}
+              >
+                ✓
+              </span>
+              <span className="leading-relaxed text-left">{item}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </Card>
   );
 }
