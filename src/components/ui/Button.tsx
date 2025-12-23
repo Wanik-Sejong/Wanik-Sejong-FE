@@ -39,6 +39,42 @@ const sizeStyles = {
   lg: 'px-8 py-4 text-lg'
 };
 
+const styleConfig = {
+  primary: {
+    backgroundColor: SejongColors.primary,
+    borderColor: 'transparent',
+    color: '#FFFFFF',
+    borderWidth: '0'
+  },
+  secondary: {
+    backgroundColor: SejongColors.secondary,
+    borderColor: 'transparent',
+    color: '#FFFFFF',
+    borderWidth: '0'
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderColor: SejongColors.primary,
+    color: SejongColors.primary,
+    borderWidth: '2px'
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    color: SejongColors.primary,
+    borderWidth: '0'
+  }
+};
+
+const baseStyles = `
+  inline-flex items-center justify-center gap-2
+  rounded-lg font-medium
+  transition-all duration-200
+  cursor-pointer
+  disabled:opacity-50 disabled:cursor-not-allowed
+  focus:outline-none focus:ring-2 focus:ring-offset-2
+`;
+
 export function Button({
   children,
   variant = 'primary',
@@ -49,31 +85,6 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps) {
-  const baseStyles = `
-    inline-flex items-center justify-center gap-2
-    rounded-lg font-medium
-    transition-all duration-200
-    disabled:opacity-50 disabled:cursor-not-allowed
-    focus:outline-none focus:ring-2 focus:ring-offset-2
-  `;
-
-  const getBackgroundColor = () => {
-    if (variant === 'primary') return SejongColors.primary;
-    if (variant === 'secondary') return SejongColors.secondary;
-    if (variant === 'outline') return 'transparent';
-    return 'transparent';
-  };
-
-  const getBorderColor = () => {
-    if (variant === 'outline') return SejongColors.primary;
-    return 'transparent';
-  };
-
-  const getTextColor = () => {
-    if (variant === 'outline' || variant === 'ghost') return SejongColors.primary;
-    return '#FFFFFF';
-  };
-
   return (
     <button
       className={`
@@ -83,12 +94,7 @@ export function Button({
         ${fullWidth ? 'w-full' : ''}
         ${className}
       `}
-      style={{
-        backgroundColor: getBackgroundColor(),
-        borderColor: getBorderColor(),
-        color: getTextColor(),
-        borderWidth: variant === 'outline' ? '2px' : '0'
-      }}
+      style={styleConfig[variant]}
       disabled={disabled || loading}
       {...props}
     >
@@ -107,6 +113,23 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg';
 }
 
+const iconSizeClasses = {
+  sm: 'w-8 h-8 text-lg',
+  md: 'w-10 h-10 text-xl',
+  lg: 'w-12 h-12 text-2xl'
+};
+
+const iconStyleConfig = {
+  primary: {
+    backgroundColor: SejongColors.primary,
+    color: '#FFFFFF'
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    color: SejongColors.text.primary
+  }
+};
+
 export function IconButton({
   icon,
   label,
@@ -115,29 +138,21 @@ export function IconButton({
   className = '',
   ...props
 }: IconButtonProps) {
-  const sizeClasses = {
-    sm: 'w-8 h-8 text-lg',
-    md: 'w-10 h-10 text-xl',
-    lg: 'w-12 h-12 text-2xl'
-  };
-
   return (
     <button
       className={`
         inline-flex items-center justify-center
         rounded-full
         transition-all duration-200
+        cursor-pointer
         hover:scale-110
         active:scale-95
         focus:outline-none focus:ring-2 focus:ring-offset-2
-        ${sizeClasses[size]}
+        ${iconSizeClasses[size]}
         ${variant === 'primary' ? 'text-white' : 'text-gray-700 hover:bg-gray-100'}
         ${className}
       `}
-      style={{
-        backgroundColor: variant === 'primary' ? SejongColors.primary : 'transparent',
-        color: variant === 'primary' ? '#FFFFFF' : SejongColors.text.primary
-      }}
+      style={iconStyleConfig[variant]}
       aria-label={label}
       {...props}
     >

@@ -34,7 +34,7 @@ export function ProcessFlow({
             <div className="flex gap-6 items-start relative z-10">
               {/* Icon Circle */}
               <div
-                className="flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-lg"
+                className="shrink-0 w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-lg"
                 style={{
                   backgroundColor: SejongColors.primary50,
                   border: `3px solid ${SejongColors.primary}`
@@ -155,7 +155,7 @@ export function Timeline({ items }: TimelineProps) {
 
             {/* Icon Circle */}
             <div
-              className="flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-md relative z-10"
+              className="shrink-0 w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-md relative z-10"
               style={{
                 backgroundColor: bgColors[status],
                 border: `3px solid ${statusColors[status]}`

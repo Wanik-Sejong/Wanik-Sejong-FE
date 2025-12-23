@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { RoadmapDisplay } from '@/components/RoadmapDisplay';
 import { Button } from '@/components/ui/Button';
@@ -28,7 +28,7 @@ export default function RoadmapPage() {
     setLoading(false);
   }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     // Clear sessionStorage
     sessionStorage.removeItem('roadmap');
     sessionStorage.removeItem('transcript');
@@ -36,7 +36,7 @@ export default function RoadmapPage() {
 
     // Navigate back to home
     router.push('/');
-  };
+  }, [router]);
 
   if (loading) {
     return (

@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import Image from 'next/image';
 import {
   Card,
@@ -21,6 +22,14 @@ import {
 import { SejongColors } from '@/styles/colors';
 
 export default function ShowcasePage() {
+  const handleStartClick = useCallback(() => {
+    console.log('Start');
+  }, []);
+
+  const handleLearnMoreClick = useCallback(() => {
+    console.log('Learn more');
+  }, []);
+
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-gray-50 to-white">
       {/* Hero Section */}
@@ -303,11 +312,11 @@ export default function ShowcasePage() {
           description="AI 기반 맞춤형 로드맵으로 당신의 진로를 설계하세요. 지금 바로 시작하실 수 있습니다."
           primaryAction={{
             label: '로드맵 생성하기',
-            onClick: () => console.log('Start')
+            onClick: handleStartClick
           }}
           secondaryAction={{
             label: '더 알아보기',
-            onClick: () => console.log('Learn more')
+            onClick: handleLearnMoreClick
           }}
           illustration={
             <div className="text-8xl">🚀</div>

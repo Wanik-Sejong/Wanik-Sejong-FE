@@ -114,7 +114,7 @@ export function Tag({ children, onRemove, variant = 'primary' }: TagProps) {
       {onRemove && (
         <button
           onClick={onRemove}
-          className="hover:opacity-70 transition-opacity"
+          className="hover:opacity-70 transition-opacity cursor-pointer"
           aria-label="Remove tag"
         >
           <svg

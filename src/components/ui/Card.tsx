@@ -36,7 +36,7 @@ export function Card({
       className={`
         bg-white rounded-2xl ${shadowStyles[shadow]} ${paddingStyles[padding]}
         transition-all duration-200
-        ${hover ? 'hover:shadow-xl hover:-translate-y-1' : ''}
+        ${hover ? 'hover:shadow-xl hover:-translate-y-1 cursor-pointer' : ''}
         ${className}
       `}
       style={style}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { FileUpload } from '@/components/FileUpload';
@@ -19,11 +19,11 @@ export default function HomePage() {
   const [transcriptData, setTranscriptData] = useState<TranscriptData | null>(null);
   const [generating, setGenerating] = useState(false);
 
-  const handleUploadSuccess = (data: TranscriptData) => {
+  const handleUploadSuccess = useCallback((data: TranscriptData) => {
     console.log('✅ Upload success:', data);
     setTranscriptData(data);
     setStep('career');
-  };
+  }, []);
 
   const handleCareerSubmit = async (careerGoal: CareerGoal) => {
     if (!transcriptData) {
@@ -56,11 +56,16 @@ export default function HomePage() {
     }
   };
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setStep('upload');
     setTranscriptData(null);
     setGenerating(false);
-  };
+  }, []);
+
+  const handleScrollToContent = useCallback(() => {
+    const target = document.getElementById('main-content');
+    target?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-gray-50 to-white">
@@ -86,10 +91,7 @@ export default function HomePage() {
             <Button
               variant="primary"
               size="lg"
-              onClick={() => {
-                const target = document.getElementById('main-content');
-                target?.scrollIntoView({ behavior: 'smooth' });
-              }}
+              onClick={handleScrollToContent}
             >
               시작하기 🚀
             </Button>

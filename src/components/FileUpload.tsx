@@ -63,9 +63,9 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
         {...getRootProps()}
         className={`
           relative border-2 border-dashed rounded-2xl p-12
-          transition-all duration-200 cursor-pointer
+          transition-all duration-200
           ${isDragActive ? 'border-primary-500 bg-primary-50' : 'border-gray-300 bg-white'}
-          ${uploading ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary-400 hover:bg-gray-50'}
+          ${uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary-400 hover:bg-gray-50'}
         `}
         style={{
           borderColor: isDragActive ? SejongColors.primary : undefined,
@@ -152,7 +152,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
         <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-start gap-3">
             <svg
-              className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"
+              className="w-5 h-5 text-red-500 shrink-0 mt-0.5"
               fill="currentColor"
               viewBox="0 0 20 20"
             >

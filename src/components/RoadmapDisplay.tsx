@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Card, StatCard } from './ui/Card';
@@ -29,12 +30,14 @@ const PRIORITY_LABELS = {
 export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
   const { careerSummary, currentSkills, learningPath, advice, generatedAt } = roadmap;
 
-  // Convert learning path to timeline format
-  const timelineItems = learningPath.map((phase, index) => ({
-    icon: ['📚', '🎓', '💻', '🚀'][index % 4],
-    title: phase.period,
-    subtitle: phase.goal,
-    description: `
+  // Convert learning path to timeline format - memoized to prevent recalculation on every render
+  const timelineItems = useMemo(
+    () =>
+      learningPath.map((phase, index) => ({
+        icon: ['📚', '🎓', '💻', '🚀'][index % 4],
+        title: phase.period,
+        subtitle: phase.goal,
+        description: `
 **📖 추천 과목 (${phase.courses.length}개)**
 ${phase.courses
   .map(
@@ -50,13 +53,15 @@ ${
 }
 
 ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
-    `.trim(),
-    date: phase.effort,
-    status: (index === 0 ? 'active' : index < learningPath.length - 1 ? 'pending' : 'pending') as
-      | 'active'
-      | 'pending'
-      | 'completed',
-  }));
+        `.trim(),
+        date: phase.effort,
+        status: (index === 0 ? 'active' : index < learningPath.length - 1 ? 'pending' : 'pending') as
+          | 'active'
+          | 'pending'
+          | 'completed',
+      })),
+    [learningPath]
+  );
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-12">
