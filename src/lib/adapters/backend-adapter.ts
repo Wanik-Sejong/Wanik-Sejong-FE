@@ -11,6 +11,7 @@ import type {
   RoadmapPhase,
   RecommendedCourse,
   RecommendedSubject,
+  RecommendedTechStack,
 } from '@/lib/types';
 import type {
   BackendTranscript,
@@ -283,6 +284,69 @@ function convertExtracurricularToPhase(
 }
 
 /**
+ * Convert backend recommendedTechStack (string[]) to frontend RecommendedTechStack[]
+ * Infers category and priority from tech stack name
+ *
+ * @param techStackNames Backend tech stack names (simple strings)
+ * @returns Frontend-compatible RecommendedTechStack array
+ */
+function convertTechStackNamesToObjects(
+  techStackNames: string[]
+): RecommendedTechStack[] {
+  // 기술스택 이름에서 카테고리 추론
+  const inferCategory = (name: string): RecommendedTechStack['category'] => {
+    const lowerName = name.toLowerCase();
+
+    // Framework
+    if (/spring|react|vue|angular|next|express|django|flask|fastapi/i.test(lowerName)) {
+      return 'framework';
+    }
+
+    // Database
+    if (/sql|postgres|mysql|mongodb|redis|oracle|mariadb|dynamodb|cassandra/i.test(lowerName)) {
+      return 'database';
+    }
+
+    // Tool
+    if (/docker|kubernetes|jenkins|git|gradle|maven|npm|webpack|vite|babel/i.test(lowerName)) {
+      return 'tool';
+    }
+
+    // Platform
+    if (/aws|azure|gcp|heroku|vercel|netlify|ec2|s3|lambda/i.test(lowerName)) {
+      return 'platform';
+    }
+
+    // Language
+    if (/java|python|javascript|typescript|kotlin|go|rust|swift|c\+\+|c#/i.test(lowerName)) {
+      return 'language';
+    }
+
+    // Default: library
+    return 'library';
+  };
+
+  // 우선순위 추론 (배열 순서 기반)
+  const inferPriority = (index: number, total: number): RecommendedTechStack['priority'] => {
+    // 첫 30%는 high, 중간 40%는 medium, 나머지는 low
+    const ratio = index / total;
+    if (ratio < 0.3) return 'high';
+    if (ratio < 0.7) return 'medium';
+    return 'low';
+  };
+
+  return techStackNames.map((name, index) => ({
+    name,
+    category: inferCategory(name),
+    reason: `${name}은(는) 이 진로에 필요한 핵심 기술입니다.`,
+    priority: inferPriority(index, techStackNames.length),
+    difficulty: undefined, // AI가 제공하지 않으므로 생략
+    resources: undefined,
+    prerequisites: undefined,
+  }));
+}
+
+/**
  * Convert backend RoadmapResponse to frontend Roadmap
  * Merges coursePlan and extracurricularPlan into learningPath
  *
@@ -311,6 +375,28 @@ export function fromBackendRoadmap(backendRoadmap: BackendRoadmapResponse): Road
   const extracurricularPhases: RoadmapPhase[] =
     backendRoadmap.extracurricularPlan.map(convertExtracurricularToPhase);
 
+  // Convert recommendedTechStack to RecommendedTechStack[]
+  const techStacks: RecommendedTechStack[] = backendRoadmap.recommendedTechStack
+    ? convertTechStackNamesToObjects(backendRoadmap.recommendedTechStack)
+    : [];
+
+  console.log('\n🛠️ 추천 기술스택 변환:');
+  console.log(`  - 백엔드 기술스택 수: ${backendRoadmap.recommendedTechStack?.length || 0}개`);
+  console.log(`  - 변환된 기술스택 수: ${techStacks.length}개`);
+  if (techStacks.length > 0) {
+    console.log('  - 샘플 (첫 3개):');
+    techStacks.slice(0, 3).forEach((tech, idx) => {
+      console.log(`    [${idx + 1}] ${tech.name} (${tech.category}, ${tech.priority})`);
+    });
+  }
+
+  // Distribute tech stacks across phases
+  // 전략: 첫 번째 CoursePlan Phase에 모든 기술스택 배치
+  if (coursePhases.length > 0 && techStacks.length > 0) {
+    coursePhases[0].techStacks = techStacks;
+    console.log(`  ✅ 기술스택을 첫 번째 Phase에 배치: ${coursePhases[0].period}`);
+  }
+
   console.log('\n' + '='.repeat(80));
   console.log('📊 [ADAPTER] 변환 완료 요약');
   console.log('='.repeat(80));
@@ -335,11 +421,13 @@ export function fromBackendRoadmap(backendRoadmap: BackendRoadmapResponse): Road
 
   const totalCourses = learningPath.reduce((sum, p) => sum + p.courses.length, 0);
   const totalActivities = learningPath.reduce((sum, p) => sum + (p.activities?.length || 0), 0);
+  const totalTechStacks = learningPath.reduce((sum, p) => sum + (p.techStacks?.length || 0), 0);
 
   console.log('\n✅ 최종 변환 결과:');
   console.log(`  - 총 학습 단계: ${learningPath.length}개`);
   console.log(`  - 총 추천 과목: ${totalCourses}개`);
   console.log(`  - 총 추천 활동: ${totalActivities}개`);
+  console.log(`  - 총 추천 기술스택: ${totalTechStacks}개`);
 
   if (totalCourses === 0) {
     console.error('\n  ❌ 경고: 변환된 과목이 0개입니다!');

@@ -193,6 +193,8 @@ export interface BackendRoadmapResponse {
   coursePlan: CoursePlan[];
   /** 비교과 활동 계획 */
   extracurricularPlan: ExtracurricularPlan[];
+  /** AI 추천 기술스택 목록 */
+  recommendedTechStack: string[];
   /** 추가 조언 */
   advice: string;
   /** 생성 일시 */
