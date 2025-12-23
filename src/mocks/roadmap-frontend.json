@@ -1,0 +1,189 @@
+{
+  "careerSummary": "컴퓨터공학 전공으로 웹프로그래밍(B+), JAVA(A+), 디지털시스템(A+) 등 프론트엔드 개발의 기초가 되는 과목들에서 우수한 성과를 보였습니다. 평균 학점 3.85/4.5로 전체적으로 탄탄하며, 총 97.5학점을 이수했습니다. 특히 UI/UX 구현과 사용자 경험 설계에 강점을 가진 프론트엔드 개발자로 성장할 잠재력을 보유하고 있습니다. 웹 기술 스택을 심화하고 모던 프레임워크 경험을 쌓으면 사용자 중심의 뛰어난 인터페이스를 구현하는 전문가가 될 수 있습니다.",
+  "currentSkills": {
+    "strengths": [
+      "웹프로그래밍 기초 완료 (B+, 3.5) - HTML, CSS, JavaScript 기본기",
+      "JAVA 프로그래밍 역량 탁월 (A+, 4.5) - OOP 개념 확립, 컴포넌트 설계",
+      "디지털시스템 우수 (A+, 4.5) - 논리적 사고력, UI 구조 설계 능력",
+      "공학설계 프로젝트 경험 (A+, 4.5) - 팀 협업, 사용자 요구사항 분석",
+      "데이터베이스 설계 역량 (A+, 4.5) - 프론트엔드-백엔드 연동 이해",
+      "알고리즘 문제해결 능력 (B+, 3.5) - 효율적인 UI 로직 구현",
+      "체계적 학습 능력 - 전반적으로 우수한 학업 성취도"
+    ],
+    "gaps": [
+      "모던 프론트엔드 프레임워크 경험 부족 - React, Vue, Svelte 실무 학습 필요",
+      "TypeScript 활용 능력 개발 필요 - 타입 안정성 있는 코드 작성",
+      "CSS 전처리기 및 디자인 시스템 경험 부족 - Sass, Tailwind, Styled-components",
+      "웹 접근성 및 성능 최적화 지식 필요 - WCAG, Core Web Vitals",
+      "반응형 웹 디자인 심화 학습 - Mobile-first, 크로스 브라우징",
+      "상태 관리 라이브러리 경험 부족 - Redux, Zustand, Recoil",
+      "실전 프론트엔드 프로젝트 포트폴리오 부족 - GitHub, 기술 블로그"
+    ]
+  },
+  "learningPath": [
+    {
+      "period": "2025년 겨울방학",
+      "goal": "모던 JavaScript 및 React 기초 완성",
+      "courses": [
+        {
+          "name": "JavaScript ES6+ 심화 (Udemy, 인프런)",
+          "type": "외부강의",
+          "reason": "모던 JS 문법 (화살표 함수, async/await, 구조분해) 완벽 습득",
+          "priority": "high",
+          "prerequisites": ["웹프로그래밍"]
+        },
+        {
+          "name": "React 기초 완성 (React 공식문서, 인프런)",
+          "type": "자가학습",
+          "reason": "컴포넌트 기반 개발, Hooks, State 관리 기초",
+          "priority": "high",
+          "prerequisites": ["웹프로그래밍"]
+        },
+        {
+          "name": "CSS 심화 및 Tailwind CSS",
+          "type": "자가학습",
+          "reason": "Flexbox, Grid, 반응형 디자인, 유틸리티 CSS 프레임워크",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "HTML/CSS 웹 표준 및 접근성",
+          "type": "외부강의",
+          "reason": "시맨틱 HTML, ARIA, WCAG 기준 이해",
+          "priority": "medium",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "React로 Todo App, 날씨 앱 등 3개 미니 프로젝트 구현",
+        "CSS Flexbox/Grid 활용 레이아웃 연습 사이트 클론 (Airbnb, Netflix 메인)",
+        "코딩 챌린지 참여 (Frontend Mentor 5개 이상 완료)",
+        "GitHub 포트폴리오 시작 - README 작성법, 프로젝트 정리",
+        "개발 블로그 개설 - Velog, Tistory (주 1회 학습 내용 정리)"
+      ],
+      "effort": "주 25시간 (8주)"
+    },
+    {
+      "period": "2026년 1학기",
+      "goal": "TypeScript 및 Next.js 실전 역량 확보",
+      "courses": [
+        {
+          "name": "TypeScript 완벽 가이드",
+          "type": "외부강의",
+          "reason": "타입 시스템, 제네릭, 고급 타입 활용으로 안정적인 코드 작성",
+          "priority": "high",
+          "prerequisites": ["JavaScript ES6+"]
+        },
+        {
+          "name": "Next.js 실전 프로젝트",
+          "type": "자가학습",
+          "reason": "SSR, SSG, API Routes, App Router 마스터",
+          "priority": "high",
+          "prerequisites": ["React 기초"]
+        },
+        {
+          "name": "UI/UX 디자인 기초",
+          "type": "교선1",
+          "reason": "사용자 경험 설계, 디자인 씽킹, 프로토타이핑 도구 (Figma)",
+          "priority": "medium",
+          "prerequisites": []
+        },
+        {
+          "name": "소프트웨어공학",
+          "type": "전공선택",
+          "reason": "협업 방법론, Git 고급, 코드 리뷰, 테스트 주도 개발",
+          "priority": "medium",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "교내 프론트엔드 스터디 또는 학회 가입 (주 1회 코드 리뷰)",
+        "개인 프로젝트: Next.js 블로그 또는 포트폴리오 사이트 제작 (TypeScript)",
+        "오픈소스 컨트리뷰션 시작 (문서 번역, 간단한 버그 수정)",
+        "해커톤 참가 (교내 또는 외부) - UI 담당으로 팀 프로젝트 경험",
+        "기술 블로그 활성화 (월 4회 포스팅) - React, TypeScript 학습 내용"
+      ],
+      "effort": "학기 중 주 15시간"
+    },
+    {
+      "period": "2026년 여름방학",
+      "goal": "상태 관리 및 성능 최적화 전문성 확보",
+      "courses": [
+        {
+          "name": "React 고급 패턴 및 성능 최적화",
+          "type": "외부강의",
+          "reason": "useMemo, useCallback, 리렌더링 최적화, React DevTools",
+          "priority": "high",
+          "prerequisites": ["React 기초", "TypeScript"]
+        },
+        {
+          "name": "상태 관리 라이브러리 마스터 (Redux, Zustand)",
+          "type": "자가학습",
+          "reason": "복잡한 상태 관리, 전역 상태 설계 패턴",
+          "priority": "high",
+          "prerequisites": ["React 기초"]
+        },
+        {
+          "name": "웹 성능 최적화 및 Core Web Vitals",
+          "type": "외부강의",
+          "reason": "LCP, FID, CLS 개선, 번들 사이즈 최적화, Lazy Loading",
+          "priority": "medium",
+          "prerequisites": ["Next.js"]
+        },
+        {
+          "name": "Jest 및 React Testing Library",
+          "type": "자가학습",
+          "reason": "프론트엔드 테스트 자동화, TDD 방법론",
+          "priority": "medium",
+          "prerequisites": ["React 기초"]
+        }
+      ],
+      "activities": [
+        "풀스택 프로젝트 제작 (Next.js + 백엔드 API 연동) - 날씨 대시보드 또는 커뮤니티 서비스",
+        "성능 최적화 실습 - Lighthouse 점수 90점 이상 달성",
+        "GitHub 포트폴리오 고도화 - 프로젝트 3개 이상, 상세 README, 라이브 데모",
+        "프론트엔드 인턴십 지원 (스타트업 5곳 이상) - 실무 경험 목표",
+        "기술 블로그 심화 - 성능 최적화, 상태 관리 패턴 경험 공유"
+      ],
+      "effort": "주 30시간 (6주)"
+    },
+    {
+      "period": "2026년 2학기",
+      "goal": "캡스톤 프로젝트 및 취업 준비 완성",
+      "courses": [
+        {
+          "name": "캡스톤디자인",
+          "type": "전공필수",
+          "reason": "팀 프로젝트로 프론트엔드 전체 역량 통합 (기획→디자인→개발→배포)",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "인간-컴퓨터 상호작용 (HCI)",
+          "type": "전공선택",
+          "reason": "사용자 연구, 인터랙션 디자인, 유저빌리티 테스트",
+          "priority": "medium",
+          "prerequisites": []
+        },
+        {
+          "name": "모바일 앱 개발 (React Native 또는 Flutter)",
+          "type": "전공선택",
+          "reason": "크로스 플랫폼 개발 역량 확장, 모바일 UI 패턴",
+          "priority": "medium",
+          "prerequisites": ["React 기초"]
+        }
+      ],
+      "activities": [
+        "프론트엔드 인턴십 (3-6개월) - 실무 프로젝트 참여 및 코드 리뷰 경험",
+        "코딩 테스트 대비 (프로그래머스 레벨2 이상, 백준 실버1 이상)",
+        "포트폴리오 최종 완성 - 대표 프로젝트 3개, 기술 스택 상세 설명",
+        "이력서 및 자기소개서 완성 - 프론트엔드 개발자 직무 중심",
+        "프론트엔드 컨퍼런스 참석 (FEConf, JSConf Korea, React Korea)",
+        "네트워킹 활동 - LinkedIn, 프론트엔드 커뮤니티 (Discord, Slack)"
+      ],
+      "effort": "학기 중 주 20시간"
+    }
+  ],
+  "advice": "이미 웹프로그래밍(B+), JAVA(A+), 디지털시스템(A+) 등에서 탄탄한 기초를 다졌으므로, 이제는 '모던 프론트엔드 기술 스택'에 집중하세요. 특히 React와 TypeScript는 현업에서 필수이므로 여름방학에 집중 학습하여 실전 프로젝트를 만들어보세요. 포트폴리오는 '완성도'가 중요합니다 - 3개 프로젝트를 만들더라도 각각 라이브 데모, 상세 README, 기술적 의사결정 과정을 문서화하세요. GitHub과 기술 블로그는 꾸준함이 핵심이므로 주 1-2회 작은 학습이라도 기록하세요. UI/UX 감각을 키우려면 dribbble, Behance에서 좋은 디자인을 많이 보고, Figma로 직접 프로토타입을 만들어보는 연습이 도움됩니다. 인턴십 경험이 취업에 결정적이므로 2026년 겨울방학부터 적극 지원하세요. 프론트엔드는 트렌드 변화가 빠르니 공식 문서를 읽는 습관, 새로운 라이브러리를 빠르게 학습하는 능력을 기르세요. 마지막으로 '사용자 경험'을 항상 최우선으로 생각하는 개발자가 되세요!",
+  "generatedAt": "2025-12-23T15:00:00Z"
+}

@@ -1,0 +1,181 @@
+{
+  "careerSummary": "컴퓨터공학 전공으로 데이터베이스(A+), 딥러닝(A), 지능사물인터넷(A+), JAVA(A+) 등 AI/ML 핵심 역량에서 탁월한 성과를 보였습니다. 평균 학점 3.85/4.5로 전체적으로 우수하며, 총 97.5학점을 이수했습니다. 특히 IoT와 AI를 융합한 임베디드 AI 엔지니어 또는 백엔드 ML 엔지니어로 성장할 강력한 잠재력을 보유하고 있습니다. 운영체제와 컴퓨터구조의 C+ 성적을 보완하면 시스템 전반에 대한 이해도가 높아져 ML 모델 최적화와 배포에서 더욱 강점을 발휘할 수 있습니다.",
+  "currentSkills": {
+    "strengths": [
+      "데이터베이스 설계 및 관리 역량 우수 (A+, 4.5) - SQL, 정규화, 인덱싱",
+      "딥러닝 기초 완료 및 신경망 이해도 높음 (A, 4.0) - CNN, RNN 학습 완료",
+      "지능사물인터넷 분야 전문성 보유 (A+, 4.5) - 임베디드 시스템, 센서 데이터",
+      "JAVA 프로그래밍 역량 탁월 (A+, 4.5) - OOP, 디자인패턴, 백엔드 개발",
+      "웹 애플리케이션 개발 경험 보유 (B+, 3.5) - HTML/CSS/JS, 프론트엔드 기초",
+      "알고리즘 문제해결 능력 준수 (B+, 3.5) - 자료구조, 알고리즘 설계",
+      "공학 프로젝트 경험 (A+, 4.5) - 팀 협업, 문제 해결"
+    ],
+    "gaps": [
+      "운영체제 및 시스템 프로그래밍 보강 필요 (C+, 2.5) - 프로세스, 메모리, 동기화",
+      "컴퓨터구조 및 하드웨어 이해도 향상 필요 (C+, 2.5) - CPU, 캐시, 파이프라인",
+      "고급 AI 기술 학습 필요 - NLP, 컴퓨터비전, Transformer 아키텍처",
+      "MLOps 및 클라우드 배포 실무 경험 부족 - Docker, Kubernetes, CI/CD",
+      "확률통계 심화 학습 권장 (B+, 3.5→A 목표) - ML 수학 기초 강화",
+      "실전 AI 프로젝트 포트폴리오 부족 - Kaggle, GitHub, 기술 블로그"
+    ]
+  },
+  "learningPath": [
+    {
+      "period": "2025년 겨울방학",
+      "goal": "시스템 기초 보강 및 ML 수학 강화",
+      "courses": [
+        {
+          "name": "운영체제 복습 (KOCW 이화여대 반효경 교수)",
+          "type": "자가학습",
+          "reason": "C+ 성적 보완, 프로세스/메모리/파일시스템 이해도 향상",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "컴퓨터구조 복습 (KOCW 연세대 유혁 교수)",
+          "type": "자가학습",
+          "reason": "C+ 성적 보완, CPU/캐시/파이프라인 동작 원리 이해",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "확률 및 통계 심화 (Khan Academy, 3Blue1Brown)",
+          "type": "외부강의",
+          "reason": "ML/AI 수학 기초 강화, 베이지안 통계, 최대우도추정",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "Python 데이터 분석 (Pandas, NumPy, Scikit-learn)",
+          "type": "자가학습",
+          "reason": "딥러닝 외 전통적 ML 기법 (회귀, 분류, 클러스터링)",
+          "priority": "medium",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "Kaggle 입문 대회 참여 2개 (Titanic, House Prices) - Bronze 메달 목표",
+        "운영체제 핵심 개념 노트 정리 (프로세스, 스레드, 동기화, 데드락)",
+        "컴퓨터구조 핵심 개념 노트 정리 (파이프라인, 캐시, 메모리 계층)",
+        "확률통계 문제 풀이 100문제 (조건부확률, 베이즈정리, 분포)",
+        "Python ML 미니 프로젝트 1개 (타이타닉 생존 예측 모델)"
+      ],
+      "effort": "주 20시간 (8주)"
+    },
+    {
+      "period": "2026년 1학기",
+      "goal": "고급 AI 기술 및 컴퓨터비전 전문성 확보",
+      "courses": [
+        {
+          "name": "컴퓨터비전",
+          "type": "전공선택",
+          "reason": "이미지/영상 AI의 핵심, CNN 심화, YOLO/R-CNN 객체인식",
+          "priority": "high",
+          "prerequisites": ["딥러닝"]
+        },
+        {
+          "name": "자연어처리",
+          "type": "전공선택",
+          "reason": "LLM 시대 필수 기술, RNN/LSTM/Transformer 아키텍처",
+          "priority": "high",
+          "prerequisites": ["딥러닝"]
+        },
+        {
+          "name": "소프트웨어공학",
+          "type": "전공선택",
+          "reason": "실전 프로젝트 개발 방법론, Git, 애자일, 테스트 주도 개발",
+          "priority": "medium",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "AI 학회 가입 및 논문 스터디 (주 1회) - CV/NLP 최신 논문 리뷰",
+        "교내 AI 경진대회 또는 해커톤 참가 - 상위 30% 목표",
+        "개인 프로젝트: 실시간 객체 인식 웹 앱 개발 (YOLOv8 + Flask + React)",
+        "GitHub 포트폴리오 시작 - 프로젝트 2개 이상 업로드",
+        "기술 블로그 시작 - Velog 또는 Medium (월 2회 포스팅)"
+      ],
+      "effort": "학기 중 주 15시간"
+    },
+    {
+      "period": "2026년 여름방학",
+      "goal": "IoT+AI 융합 및 MLOps 실무 경험",
+      "courses": [
+        {
+          "name": "Docker & Kubernetes 실습",
+          "type": "자가학습",
+          "reason": "컨테이너 기반 AI 모델 배포 및 오케스트레이션",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "AWS ML 서비스 (SageMaker, Lambda, S3)",
+          "type": "외부강의",
+          "reason": "클라우드 ML 파이프라인 구축, 서버리스 배포, 비용 최적화",
+          "priority": "medium",
+          "prerequisites": []
+        },
+        {
+          "name": "임베디드 AI (TensorFlow Lite, Edge AI)",
+          "type": "자가학습",
+          "reason": "IoT 기기에서 AI 모델 실행 (지능사물인터넷 A+ 강점 활용)",
+          "priority": "high",
+          "prerequisites": ["딥러닝"]
+        },
+        {
+          "name": "MLOps 기초 (MLflow, DVC, Airflow)",
+          "type": "외부강의",
+          "reason": "ML 모델 버전 관리, 실험 추적, 파이프라인 자동화",
+          "priority": "medium",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "End-to-End IoT+AI 프로젝트 (라즈베리파이 + 실시간 객체인식 CCTV)",
+        "GitHub 포트폴리오 정리 및 README 작성 (프로젝트별 상세 문서화)",
+        "기술 블로그 활성화 (MLOps, Edge AI 경험 공유)",
+        "ML 엔지니어 인턴십 지원 (네이버, 카카오, AI 스타트업 5곳 이상)",
+        "오픈소스 기여 시작 (TensorFlow Lite, YOLO 등 작은 기여부터)"
+      ],
+      "effort": "주 25시간 (6주)"
+    },
+    {
+      "period": "2026년 2학기",
+      "goal": "캡스톤 프로젝트 및 취업 준비 완성",
+      "courses": [
+        {
+          "name": "캡스톤디자인",
+          "type": "전공필수",
+          "reason": "팀 프로젝트로 전체 역량 통합 (AI 서비스 기획→개발→배포)",
+          "priority": "high",
+          "prerequisites": []
+        },
+        {
+          "name": "강화학습",
+          "type": "전공선택",
+          "reason": "최신 AI 연구 트렌드 (DQN, PPO, 게임 AI, 로봇 제어)",
+          "priority": "medium",
+          "prerequisites": ["딥러닝"]
+        },
+        {
+          "name": "클라우드컴퓨팅",
+          "type": "전공선택",
+          "reason": "AWS/GCP 인프라 설계, Auto Scaling, 비용 최적화",
+          "priority": "medium",
+          "prerequisites": []
+        }
+      ],
+      "activities": [
+        "AI 스타트업 또는 대기업 인턴십 (6개월) - 실무 경험 축적",
+        "코딩 테스트 대비 (백준 골드5 이상, 프로그래머스 레벨3 이상)",
+        "포트폴리오 완성 (프로젝트 3개 이상, GitHub README 고도화)",
+        "이력서 및 자기소개서 완성 (AI 엔지니어 직무 중심)",
+        "AI 관련 컨퍼런스 참석 (DEVIEW, PyConKR, AI KOREA, if kakao)",
+        "네트워킹 활동 (LinkedIn, AI 커뮤니티, 세종대 AI 동문 네트워크)"
+      ],
+      "effort": "학기 중 주 20시간"
+    }
+  ],
+  "advice": "이미 딥러닝(A), 데이터베이스(A+), IoT(A+), JAVA(A+) 등 핵심 과목에서 우수한 성적을 받았으므로, 이제는 '깊이'와 '실전 경험'에 집중하세요. 특히 운영체제(C+)와 컴퓨터구조(C+)가 약점이므로 여름방학에 집중 복습하여 시스템 이해도를 높이면, ML 모델 최적화(메모리 관리, 병렬처리)와 서버 배포에서 큰 차별화 요소가 됩니다. IoT 강점(A+)을 살려 임베디드 AI(Edge AI) 분야를 적극 고려하세요 - 라즈베리파이나 Jetson Nano에서 YOLO를 돌리는 프로젝트는 포트폴리오로 매우 강력합니다. Kaggle 대회 참여로 실전 ML 감각을 키우고, GitHub과 기술 블로그로 꾸준히 기록하세요. 인턴십 경험이 취업에 결정적이므로 2026년 겨울방학부터 적극 지원하세요. 네트워킹도 중요하니 학회, 스터디, 컨퍼런스, LinkedIn에서 AI 커뮤니티와 교류하세요!",
+  "generatedAt": "2025-12-23T15:00:00Z"
+}
