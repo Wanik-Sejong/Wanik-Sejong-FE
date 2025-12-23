@@ -126,9 +126,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <Hero
         badge="완익세종"
-        title="취향에 맞는 진로를"
-        subtitle="어디에?"
-        description="AI 기반으로 학생의 이수 과목과 희망 진로를 분석하여 맞춤형 학습 로드맵을 제공합니다. 개별화된 취향 분석을 통해 나만의 커리어 경로를 찾아보세요."
+        title="AI가 분석한"
+        subtitle="맞춤 로드맵"
+        description="AI 기반으로 학생의 이수 과목과 희망 진로를 분석하여 맞춤형 학습 로드맵을 제공합니다. 개별화된 분석을 통해 나만의 커리어 경로를 찾아보세요."
         illustration={
           <div className="relative w-80 h-80">
             <Image
@@ -291,6 +291,19 @@ export default function HomePage() {
           <p className="text-gray-400 mb-6">
             AI 기반 진로-교과목 로드맵 추천 서비스
           </p>
+
+          {/* Team Members */}
+          <div className="mb-6 pt-6 border-t border-gray-700">
+            <p className="text-sm text-gray-400 mb-3">개발팀</p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 text-sm text-gray-500">
+              <span>20011650 홍의민</span>
+              <span className="hidden sm:inline">•</span>
+              <span>23011818 아정연</span>
+              <span className="hidden sm:inline">•</span>
+              <span>21011606 박성열</span>
+            </div>
+          </div>
+
           <p className="text-sm text-gray-500">
             © 2025 Sejong University. All rights reserved.
           </p>
