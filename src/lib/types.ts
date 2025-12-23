@@ -96,6 +96,8 @@ export interface RoadmapPhase {
   goal: string;
   /** 추천 과목 (Recommended courses) */
   courses: RecommendedCourse[];
+  /** 추천 기술스택 (Recommended tech stacks) */
+  techStacks?: RecommendedTechStack[];
   /** 추가 활동 (Additional activities) */
   activities?: string[];
   /** 예상 학습량 (Estimated effort) */
@@ -115,6 +117,38 @@ export interface RecommendedCourse {
   /** 우선순위 (Priority: high, medium, low) */
   priority?: 'high' | 'medium' | 'low';
   /** 선수 과목 (Prerequisites - optional) */
+  prerequisites?: string[];
+}
+
+/**
+ * Learning resource for tech stack
+ */
+export interface LearningResource {
+  /** 자료 제목 (Resource title) */
+  title: string;
+  /** 자료 URL (Resource URL) */
+  url: string;
+  /** 자료 유형 (Resource type) */
+  type: 'official' | 'tutorial' | 'course' | 'video';
+}
+
+/**
+ * Recommended tech stack in roadmap
+ */
+export interface RecommendedTechStack {
+  /** 기술스택 이름 (Tech stack name: e.g., "React", "Spring Boot", "Docker") */
+  name: string;
+  /** 카테고리 (Category) */
+  category: 'framework' | 'library' | 'tool' | 'language' | 'database' | 'platform';
+  /** 추천 이유 (Reason for recommendation) */
+  reason: string;
+  /** 우선순위 (Priority: high, medium, low) */
+  priority: 'high' | 'medium' | 'low';
+  /** 학습 난이도 1-5 (Difficulty level: 1=beginner, 5=advanced) */
+  difficulty?: number;
+  /** 추천 학습 자료 (Recommended learning resources) */
+  resources?: LearningResource[];
+  /** 선수 기술 (Prerequisites - optional) */
   prerequisites?: string[];
 }
 

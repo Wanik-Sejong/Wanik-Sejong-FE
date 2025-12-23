@@ -14,6 +14,12 @@ interface RoadmapDisplayProps {
   onReset?: () => void;
 }
 
+const PRIORITY_VARIANTS = {
+  high: 'primary' as const,
+  medium: 'gold' as const,
+  low: 'secondary' as const,
+};
+
 const PRIORITY_COLORS = {
   high: SejongColors.primary,
   medium: SejongColors.gold,
@@ -41,7 +47,7 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
             {/* 추천 과목 섹션 */}
             <div>
               <h4 className="font-semibold text-gray-900 mb-2">
-                추천 과목 ({phase.courses.length}개)
+                📚 추천 과목 ({phase.courses.length}개)
               </h4>
               <ul className="space-y-2 text-sm">
                 {phase.courses.map((course, idx) => (
@@ -53,10 +59,53 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
               </ul>
             </div>
 
+            {/* 추천 기술스택 섹션 (있는 경우) */}
+            {phase.techStacks && phase.techStacks.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  💻 추천 기술스택 ({phase.techStacks.length}개)
+                </h4>
+                <div className="grid grid-cols-1 gap-3">
+                  {phase.techStacks.map((tech, idx) => (
+                    <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium text-gray-900">{tech.name}</span>
+                        <Badge variant={PRIORITY_VARIANTS[tech.priority]}>
+                          {PRIORITY_LABELS[tech.priority]}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-gray-600 mb-2">{tech.reason}</p>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span className="bg-gray-200 px-2 py-0.5 rounded">{tech.category}</span>
+                        {tech.difficulty && (
+                          <span>난이도: {'⭐'.repeat(tech.difficulty)}</span>
+                        )}
+                      </div>
+                      {tech.resources && tech.resources.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {tech.resources.map((resource, ridx) => (
+                            <a
+                              key={ridx}
+                              href={resource.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 hover:text-blue-800 underline"
+                            >
+                              📖 {resource.title}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* 추가 활동 섹션 (있는 경우) */}
             {phase.activities && phase.activities.length > 0 && (
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">추가 활동</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">🎯 추가 활동</h4>
                 <ul className="space-y-1 text-sm">
                   {phase.activities.map((activity, idx) => (
                     <li key={idx} className="text-gray-700">
@@ -70,7 +119,7 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
             {/* 예상 학습량 */}
             {phase.effort && (
               <p className="text-sm font-medium text-gray-600">
-                예상 학습량: {phase.effort}
+                ⏱️ 예상 학습량: {phase.effort}
               </p>
             )}
           </div>

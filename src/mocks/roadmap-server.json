@@ -55,6 +55,65 @@
           "prerequisites": ["운영체제"]
         }
       ],
+      "techStacks": [
+        {
+          "name": "Linux",
+          "category": "platform",
+          "reason": "서버 운영의 핵심 OS, 시스템 관리 및 쉘 스크립팅",
+          "priority": "high",
+          "difficulty": 3,
+          "resources": [
+            {
+              "title": "Linux Documentation",
+              "url": "https://www.kernel.org/doc/html/latest/",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "Docker",
+          "category": "tool",
+          "reason": "컨테이너 기반 애플리케이션 배포 및 관리",
+          "priority": "high",
+          "difficulty": 3,
+          "resources": [
+            {
+              "title": "Docker 공식 문서",
+              "url": "https://docs.docker.com/",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tool",
+          "reason": "버전 관리 및 협업 필수 도구",
+          "priority": "high",
+          "difficulty": 2,
+          "resources": [
+            {
+              "title": "Pro Git (한글)",
+              "url": "https://git-scm.com/book/ko/v2",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "Bash Scripting",
+          "category": "language",
+          "reason": "자동화 및 시스템 관리 스크립트 작성",
+          "priority": "medium",
+          "difficulty": 2,
+          "resources": [
+            {
+              "title": "Bash Guide",
+              "url": "https://mywiki.wooledge.org/BashGuide",
+              "type": "tutorial"
+            }
+          ],
+          "prerequisites": ["Linux"]
+        }
+      ],
       "activities": [
         "운영체제 핵심 개념 노트 정리 (프로세스, 메모리, 파일시스템, 동기화)",
         "컴퓨터구조 핵심 개념 노트 정리 (CPU, 캐시, 파이프라인, 메모리 계층)",

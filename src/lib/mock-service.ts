@@ -4,7 +4,7 @@
  */
 
 import mockCourses from '@/mocks/courses.json';
-import mockRoadmap from '@/mocks/roadmap.json';
+import roadmapBackend from '@/mocks/roadmap-backend.json';
 import type {
   TranscriptData,
   CareerGoal,
@@ -80,8 +80,8 @@ export async function mockGenerateRoadmap(
 
   // Customize mock roadmap with user's career goal
   const customizedRoadmap: Roadmap = {
-    ...mockRoadmap,
-    careerSummary: `${careerGoal.careerPath}는 ${mockRoadmap.careerSummary.split('는 ')[1]}`,
+    ...roadmapBackend,
+    careerSummary: `${careerGoal.careerPath}는 ${roadmapBackend.careerSummary.split('는 ')[1]}`,
     generatedAt: new Date().toISOString(),
   } as Roadmap;
 
@@ -110,5 +110,5 @@ export function getMockTranscript(): TranscriptData {
  * Returns sample roadmap for testing
  */
 export function getMockRoadmap(): Roadmap {
-  return mockRoadmap as Roadmap;
+  return roadmapBackend as Roadmap;
 }

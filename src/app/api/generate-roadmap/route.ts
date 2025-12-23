@@ -13,16 +13,80 @@ import roadmapFrontend from '@/mocks/roadmap-frontend.json';
 import roadmapServer from '@/mocks/roadmap-server.json';
 
 /**
+ * Normalize career path to mock data key
+ * 진로명을 Mock 데이터 키로 정규화
+ */
+function normalizeCareerPath(careerPath: string): string {
+  const normalized = careerPath.toLowerCase().trim();
+
+  // 백엔드 계열
+  if (
+    normalized.includes('백엔드') ||
+    normalized.includes('backend') ||
+    normalized.includes('back-end') ||
+    normalized.includes('서버 개발') ||
+    normalized.includes('ai') ||
+    normalized.includes('ml') ||
+    normalized.includes('머신러닝') ||
+    normalized.includes('인공지능') ||
+    normalized.includes('데이터')
+  ) {
+    return 'backend';
+  }
+
+  // 프론트엔드 계열
+  if (
+    normalized.includes('프론트엔드') ||
+    normalized.includes('frontend') ||
+    normalized.includes('front-end') ||
+    normalized.includes('프론트') ||
+    normalized.includes('웹') ||
+    normalized.includes('모바일') ||
+    normalized.includes('앱') ||
+    normalized.includes('ui') ||
+    normalized.includes('ux')
+  ) {
+    return 'frontend';
+  }
+
+  // DevOps/서버 계열
+  if (
+    normalized.includes('devops') ||
+    normalized.includes('인프라') ||
+    normalized.includes('클라우드') ||
+    normalized.includes('서버 운영') ||
+    normalized.includes('sre') ||
+    normalized.includes('시스템')
+  ) {
+    return 'server';
+  }
+
+  // 풀스택 → 프론트엔드 (UI 포함)
+  if (normalized.includes('풀스택') || normalized.includes('fullstack')) {
+    return 'frontend';
+  }
+
+  // 게임 → 백엔드 (서버 로직)
+  if (normalized.includes('게임')) {
+    return 'backend';
+  }
+
+  // 기본값: 백엔드
+  return 'backend';
+}
+
+/**
  * Get mock roadmap based on career path
  */
 function getMockRoadmap(careerPath: string): Roadmap {
+  const normalizedKey = normalizeCareerPath(careerPath);
   const mockData: Record<string, Roadmap> = {
     backend: roadmapBackend as Roadmap,
     frontend: roadmapFrontend as Roadmap,
     server: roadmapServer as Roadmap,
   };
 
-  return mockData[careerPath] || mockData.backend;
+  return mockData[normalizedKey];
 }
 
 /**
@@ -190,6 +254,23 @@ ${courseList}
           "prerequisites": ["선수과목1", "선수과목2"]
         }
       ],
+      "techStacks": [
+        {
+          "name": "기술스택 이름 (예: React, Spring Boot, Docker)",
+          "category": "framework|library|tool|language|database|platform",
+          "reason": "추천 이유 (왜 이 기술을 배워야 하는지)",
+          "priority": "high|medium|low",
+          "difficulty": 1~5 (1=입문, 5=고급),
+          "resources": [
+            {
+              "title": "학습 자료 제목",
+              "url": "https://공식문서또는튜토리얼URL",
+              "type": "official|tutorial|course|video"
+            }
+          ],
+          "prerequisites": ["선수 기술"]
+        }
+      ],
       "activities": ["추가 활동 1", "추가 활동 2"],
       "effort": "주 N시간 (N주)"
     }
@@ -200,9 +281,21 @@ ${courseList}
 **요구사항:**
 1. learningPath는 최소 3개, 최대 5개 기간으로 구성
 2. 각 기간마다 2-4개의 과목 추천
-3. 실제 세종대학교 교과과정과 외부 강의(Coursera, Udemy 등)를 적절히 조합
-4. 학생의 현재 역량과 희망 진로를 고려한 현실적인 로드맵
-5. 구체적이고 실행 가능한 조언 제공
+3. **각 기간마다 3-5개의 기술스택 추천 (필수)**
+   - 진로에 맞는 실무 기술스택 포함 (프레임워크, 라이브러리, 도구)
+   - 학습 순서 고려 (기초 → 심화)
+   - 공식 문서 URL 포함 (https://로 시작하는 유효한 URL)
+   - 난이도는 1(입문)~5(고급)로 평가
+4. 실제 세종대학교 교과과정과 외부 강의(Coursera, Udemy 등)를 적절히 조합
+5. 학생의 현재 역량과 희망 진로를 고려한 현실적인 로드맵
+6. 구체적이고 실행 가능한 조언 제공
+
+**기술스택 추천 가이드라인:**
+- Backend: Spring Boot, Django, FastAPI, PostgreSQL, Redis, Docker, Kubernetes 등
+- Frontend: React, Next.js, TypeScript, Tailwind CSS, Zustand, React Query 등
+- DevOps: Docker, Kubernetes, Jenkins, AWS, Terraform, Prometheus 등
+- 공식 문서 우선, 한국어 자료가 있으면 포함
+- 실무 수요가 높은 기술 우선 추천
 
 응답은 반드시 위의 JSON 구조를 따라야 합니다.
 `.trim();

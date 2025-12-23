@@ -53,6 +53,65 @@
           "prerequisites": []
         }
       ],
+      "techStacks": [
+        {
+          "name": "Python",
+          "category": "language",
+          "reason": "ML/AI 개발의 표준 언어, NumPy/Pandas 생태계 활용",
+          "priority": "high",
+          "difficulty": 2,
+          "resources": [
+            {
+              "title": "Python 공식 문서",
+              "url": "https://docs.python.org/ko/3/tutorial/",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "Git",
+          "category": "tool",
+          "reason": "버전 관리 필수 도구, 협업 및 포트폴리오 관리",
+          "priority": "high",
+          "difficulty": 2,
+          "resources": [
+            {
+              "title": "Pro Git (한글)",
+              "url": "https://git-scm.com/book/ko/v2",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "Jupyter Notebook",
+          "category": "tool",
+          "reason": "데이터 분석 및 ML 실험 환경",
+          "priority": "medium",
+          "difficulty": 1,
+          "resources": [
+            {
+              "title": "Jupyter 공식 문서",
+              "url": "https://jupyter.org/documentation",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "NumPy & Pandas",
+          "category": "library",
+          "reason": "데이터 처리 및 분석 핵심 라이브러리",
+          "priority": "high",
+          "difficulty": 3,
+          "resources": [
+            {
+              "title": "Pandas 공식 문서",
+              "url": "https://pandas.pydata.org/docs/",
+              "type": "official"
+            }
+          ],
+          "prerequisites": ["Python"]
+        }
+      ],
       "activities": [
         "Kaggle 입문 대회 참여 2개 (Titanic, House Prices) - Bronze 메달 목표",
         "운영체제 핵심 개념 노트 정리 (프로세스, 스레드, 동기화, 데드락)",

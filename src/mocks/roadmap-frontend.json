@@ -54,6 +54,65 @@
           "prerequisites": []
         }
       ],
+      "techStacks": [
+        {
+          "name": "React",
+          "category": "framework",
+          "reason": "모던 프론트엔드 개발의 핵심 라이브러리, 컴포넌트 기반 UI 구축",
+          "priority": "high",
+          "difficulty": 3,
+          "resources": [
+            {
+              "title": "React 공식 문서 (한글)",
+              "url": "https://ko.react.dev/",
+              "type": "official"
+            }
+          ],
+          "prerequisites": ["JavaScript"]
+        },
+        {
+          "name": "Tailwind CSS",
+          "category": "framework",
+          "reason": "유틸리티 기반 CSS 프레임워크, 빠른 UI 개발",
+          "priority": "high",
+          "difficulty": 2,
+          "resources": [
+            {
+              "title": "Tailwind CSS 공식 문서",
+              "url": "https://tailwindcss.com/docs",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "Git & GitHub",
+          "category": "tool",
+          "reason": "버전 관리 및 협업 필수 도구",
+          "priority": "high",
+          "difficulty": 2,
+          "resources": [
+            {
+              "title": "Pro Git (한글)",
+              "url": "https://git-scm.com/book/ko/v2",
+              "type": "official"
+            }
+          ]
+        },
+        {
+          "name": "Vite",
+          "category": "tool",
+          "reason": "빠른 개발 서버 및 빌드 도구",
+          "priority": "medium",
+          "difficulty": 1,
+          "resources": [
+            {
+              "title": "Vite 공식 문서",
+              "url": "https://vitejs.dev/",
+              "type": "official"
+            }
+          ]
+        }
+      ],
       "activities": [
         "React로 Todo App, 날씨 앱 등 3개 미니 프로젝트 구현",
         "CSS Flexbox/Grid 활용 레이아웃 연습 사이트 클론 (Airbnb, Netflix 메인)",
