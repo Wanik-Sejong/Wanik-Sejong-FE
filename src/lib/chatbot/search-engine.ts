@@ -35,11 +35,9 @@ export class LocalSearchEngine {
 
     // 1. 키워드 추출
     const keywords = this.extractKeywords(query);
-    console.log('🔍 Keywords:', keywords);
 
     // 2. 의도 파악
     const intent = this.detectIntent(query);
-    console.log('🎯 Intent:', intent);
 
     // 3. 병렬 검색 실행
     const [courseResults, professorResults, dayResults, typeResults, courseCodeResults] = await Promise.all([

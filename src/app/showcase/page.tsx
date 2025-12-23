@@ -23,11 +23,9 @@ import { SejongColors } from '@/styles/colors';
 
 export default function ShowcasePage() {
   const handleStartClick = useCallback(() => {
-    console.log('Start');
   }, []);
 
   const handleLearnMoreClick = useCallback(() => {
-    console.log('Learn more');
   }, []);
 
   return (
@@ -295,10 +293,10 @@ export default function ShowcasePage() {
             <Tag variant="primary">AI/ML</Tag>
             <Tag variant="secondary">백엔드 개발</Tag>
             <Tag variant="gold">데이터 분석</Tag>
-            <Tag variant="primary" onRemove={() => console.log('Removed')}>
+            <Tag variant="primary" onRemove={() => {}}>
               Python
             </Tag>
-            <Tag variant="secondary" onRemove={() => console.log('Removed')}>
+            <Tag variant="secondary" onRemove={() => {}}>
               딥러닝
             </Tag>
           </div>

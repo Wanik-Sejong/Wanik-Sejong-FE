@@ -118,7 +118,6 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
       // 3. 다운로드
       downloadMarkdownFile(markdownContent, filename);
 
-      console.log('✅ Roadmap downloaded as Markdown:', filename);
     } catch (error) {
       console.error('❌ Failed to download roadmap:', error);
       alert('로드맵 다운로드 중 오류가 발생했습니다. 다시 시도해주세요.');

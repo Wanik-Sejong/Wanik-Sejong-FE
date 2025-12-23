@@ -30,11 +30,6 @@ export class AIChatService {
     courseContext: CourseData[] = []
   ): Promise<AIChatResponse> {
     try {
-      console.log('🤖 Sending message to AI:', {
-        message: userMessage,
-        contextSize: courseContext.length,
-        historySize: this.conversationHistory.length,
-      });
 
       const response = await fetch('/api/chatbot', {
         method: 'POST',
@@ -84,7 +79,6 @@ export class AIChatService {
    */
   clearHistory() {
     this.conversationHistory = [];
-    console.log('🗑️ Conversation history cleared');
   }
 
   /**

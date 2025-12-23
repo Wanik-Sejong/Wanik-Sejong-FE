@@ -66,11 +66,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('🤖 Chatbot request:', {
-      message,
-      contextSize: courseContext.length,
-      historySize: conversationHistory.length,
-    });
 
     // Gemini AI 초기화
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -95,17 +90,12 @@ export async function POST(request: NextRequest) {
       courseContext
     );
 
-    console.log('📝 Full prompt length:', fullPrompt.length);
 
     // Gemini AI 호출
     const result = await model.generateContent(fullPrompt);
     const response = result.response;
     const aiMessage = response.text();
 
-    console.log('✅ Gemini AI response received:', {
-      length: aiMessage.length,
-      preview: aiMessage.substring(0, 100),
-    });
 
     return NextResponse.json({
       success: true,

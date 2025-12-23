@@ -121,29 +121,8 @@ export function toBackendCareerGoal(careerGoal: CareerGoal): string {
  * @returns Frontend roadmap phase
  */
 function convertCoursePlanToPhase(coursePlan: CoursePlan): RoadmapPhase {
-  console.log('\n' + '─'.repeat(80));
-  console.log(`🔄 [ADAPTER] CoursePlan 변환 시작: ${coursePlan.period}`);
-  console.log('─'.repeat(80));
-  console.log('📊 입력 데이터:');
-  console.log(`  - 총 과목 수: ${coursePlan.courses.length}`);
-  console.log(`  - 목표: ${coursePlan.goal}`);
-  console.log(`  - 노력: ${coursePlan.effort}`);
 
-  console.log('\n📝 전체 과목 필드 분석:');
   coursePlan.courses.forEach((c: any, idx) => {
-    console.log(`  [${idx + 1}]:`, {
-      백엔드형식: {
-        courseName: c.courseName || '❌',
-        courseType: c.courseType || '❌',
-        courseCode: c.courseCode || '❌',
-      },
-      프론트형식: {
-        name: c.name || '❌',
-        type: c.type || '❌',
-        reason: c.reason || '❌',
-        priority: c.priority || '❌',
-      },
-    });
   });
 
   // ✅ TEMPORARY COMPATIBILITY FIX: Accept both backend format and frontend format
@@ -174,7 +153,6 @@ function convertCoursePlanToPhase(coursePlan: CoursePlan): RoadmapPhase {
         console.warn(`     - 기대 필드: courseName, courseType`);
         console.warn(`     - 문서 참조: claudedocs/BACKEND_API_FORMAT_MISMATCH.md`);
       } else if (usingBackendFormat) {
-        console.log(`  ✅ [과목 ${courseName}] 백엔드 형식 올바름`);
       }
 
       // Map priority from Korean to English
@@ -197,23 +175,14 @@ function convertCoursePlanToPhase(coursePlan: CoursePlan): RoadmapPhase {
     })
     .filter((course): course is RecommendedCourse => course !== null);
 
-  console.log('\n📊 변환 결과:');
-  console.log(`  - 입력 과목 수: ${coursePlan.courses.length}`);
-  console.log(`  - 변환 성공: ${recommendedCourses.length}`);
-  console.log(`  - 필터링됨: ${coursePlan.courses.length - recommendedCourses.length}`);
 
   if (recommendedCourses.length === 0 && coursePlan.courses.length > 0) {
     console.error('  ❌ 경고: 모든 과목이 필터링되었습니다!');
   }
 
-  console.log('\n✅ 변환된 과목 목록:');
   recommendedCourses.forEach((course, idx) => {
-    console.log(`  [${idx + 1}] ${course.name} (${course.type})`);
-    console.log(`      이유: ${course.reason}`);
-    console.log(`      우선순위: ${course.priority}`);
   });
 
-  console.log('─'.repeat(80) + '\n');
 
   return {
     period: coursePlan.period,
@@ -354,17 +323,6 @@ function convertTechStackNamesToObjects(
  * @returns Frontend-compatible roadmap
  */
 export function fromBackendRoadmap(backendRoadmap: BackendRoadmapResponse): Roadmap {
-  console.log('\n' + '='.repeat(80));
-  console.log('🔄 [ADAPTER] 백엔드 로드맵 → 프론트엔드 형식 변환 시작');
-  console.log('='.repeat(80));
-  console.log('📊 입력 로드맵 정보:');
-  console.log(`  - 진로 요약: ${backendRoadmap.careerSummary.substring(0, 50)}...`);
-  console.log(`  - 강점: ${backendRoadmap.currentSkills.strengths.length}개`);
-  console.log(`  - 보완점: ${backendRoadmap.currentSkills.gaps.length}개`);
-  console.log(`  - 교내 로드맵 단계: ${backendRoadmap.coursePlan.length}개`);
-  console.log(`  - 교외 활동 단계: ${backendRoadmap.extracurricularPlan.length}개`);
-  console.log(`  - 총 단계 수: ${backendRoadmap.coursePlan.length + backendRoadmap.extracurricularPlan.length}개`);
-  console.log('='.repeat(80));
 
   // Convert coursePlan to phases
   const coursePhases: RoadmapPhase[] = backendRoadmap.coursePlan.map(
@@ -380,13 +338,8 @@ export function fromBackendRoadmap(backendRoadmap: BackendRoadmapResponse): Road
     ? convertTechStackNamesToObjects(backendRoadmap.recommendedTechStack)
     : [];
 
-  console.log('\n🛠️ 추천 기술스택 변환:');
-  console.log(`  - 백엔드 기술스택 수: ${backendRoadmap.recommendedTechStack?.length || 0}개`);
-  console.log(`  - 변환된 기술스택 수: ${techStacks.length}개`);
   if (techStacks.length > 0) {
-    console.log('  - 샘플 (첫 3개):');
     techStacks.slice(0, 3).forEach((tech, idx) => {
-      console.log(`    [${idx + 1}] ${tech.name} (${tech.category}, ${tech.priority})`);
     });
   }
 
@@ -394,21 +347,13 @@ export function fromBackendRoadmap(backendRoadmap: BackendRoadmapResponse): Road
   // 전략: 첫 번째 CoursePlan Phase에 모든 기술스택 배치
   if (coursePhases.length > 0 && techStacks.length > 0) {
     coursePhases[0].techStacks = techStacks;
-    console.log(`  ✅ 기술스택을 첫 번째 Phase에 배치: ${coursePhases[0].period}`);
   }
 
-  console.log('\n' + '='.repeat(80));
-  console.log('📊 [ADAPTER] 변환 완료 요약');
-  console.log('='.repeat(80));
 
-  console.log('\n📚 교내 로드맵 (CoursePlan):');
   coursePhases.forEach((p, idx) => {
-    console.log(`  [${idx + 1}] ${p.period}: ${p.courses.length}개 과목`);
   });
 
-  console.log('\n🌍 교외 활동 (ExtracurricularPlan):');
   extracurricularPhases.forEach((p, idx) => {
-    console.log(`  [${idx + 1}] ${p.period}: ${p.courses.length}개 과목, ${p.activities?.length || 0}개 활동`);
   });
 
   // Merge and sort by period (chronological order)
@@ -423,11 +368,6 @@ export function fromBackendRoadmap(backendRoadmap: BackendRoadmapResponse): Road
   const totalActivities = learningPath.reduce((sum, p) => sum + (p.activities?.length || 0), 0);
   const totalTechStacks = learningPath.reduce((sum, p) => sum + (p.techStacks?.length || 0), 0);
 
-  console.log('\n✅ 최종 변환 결과:');
-  console.log(`  - 총 학습 단계: ${learningPath.length}개`);
-  console.log(`  - 총 추천 과목: ${totalCourses}개`);
-  console.log(`  - 총 추천 활동: ${totalActivities}개`);
-  console.log(`  - 총 추천 기술스택: ${totalTechStacks}개`);
 
   if (totalCourses === 0) {
     console.error('\n  ❌ 경고: 변환된 과목이 0개입니다!');
@@ -451,20 +391,11 @@ export function fromBackendRoadmap(backendRoadmap: BackendRoadmapResponse): Road
       courseFormat: scoredSubject.subject.courseFormat,
     })) || [];
 
-  console.log(`\n📚 AI 추천 과목 변환: ${recommendedSubjects.length}개`);
   if (recommendedSubjects.length > 0) {
-    console.log('  - 매칭된 분야:', backendRoadmap.subjectRecommendations?.matchedSectors.join(', '));
-    console.log('  - Top N:', backendRoadmap.subjectRecommendations?.topN);
-    console.log('  - 샘플 과목 (첫 3개):');
     recommendedSubjects.slice(0, 3).forEach((subject, idx) => {
-      console.log(`    [${idx + 1}] ${subject.courseName} (${subject.courseType})`);
-      console.log(`        - 학수번호: ${subject.courseCode}`);
-      console.log(`        - 점수: ${subject.score}`);
-      console.log(`        - 이유: ${subject.reasons.join(', ')}`);
     });
   }
 
-  console.log('='.repeat(80) + '\n');
 
   return {
     careerSummary: backendRoadmap.careerSummary,

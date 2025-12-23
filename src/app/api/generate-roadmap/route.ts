@@ -94,19 +94,12 @@ function getMockRoadmap(careerPath: string): Roadmap {
  * Generate AI-powered learning roadmap using Google Gemini 2.0
  */
 export async function POST(request: NextRequest) {
-  console.log('🔵 API Route: /api/generate-roadmap - Request received');
 
   try {
     // Parse request body
     const body: RoadmapRequest = await request.json();
     const { transcript, careerGoal } = body;
 
-    console.log('📊 Request data:', {
-      hasCourses: !!transcript?.courses,
-      courseCount: transcript?.courses?.length || 0,
-      careerPath: careerGoal?.careerPath || 'not provided',
-      useMock: process.env.NEXT_PUBLIC_USE_MOCK,
-    });
 
     // Validate inputs
     if (!transcript || !transcript.courses || transcript.courses.length === 0) {
@@ -135,7 +128,6 @@ export async function POST(request: NextRequest) {
     const useMockData = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 
     if (useMockData) {
-      console.log('🎭 Using Mock data mode');
       const roadmap = getMockRoadmap(careerGoal.careerPath);
       return NextResponse.json<GenerateRoadmapResponse>({
         success: true,
@@ -159,7 +151,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('🤖 Calling Gemini API...');
 
     // Initialize Gemini client
     const genAI = new GoogleGenerativeAI(config.gemini.apiKey);
@@ -182,10 +173,6 @@ export async function POST(request: NextRequest) {
     const response = result.response;
     const responseText = response.text();
 
-    console.log('📥 Gemini API response received:', {
-      hasText: !!responseText,
-      textLength: responseText?.length || 0,
-    });
 
     if (!responseText) {
       throw new Error('Gemini 응답이 비어있습니다.');
@@ -194,7 +181,6 @@ export async function POST(request: NextRequest) {
     let roadmapData;
     try {
       roadmapData = JSON.parse(responseText);
-      console.log('✅ JSON parsing successful');
     } catch (parseError) {
       console.error('❌ JSON parsing failed:', parseError);
       console.error('Response text:', responseText.substring(0, 500));
@@ -210,10 +196,6 @@ export async function POST(request: NextRequest) {
       generatedAt: new Date().toISOString(),
     };
 
-    console.log('✅ Roadmap generated successfully:', {
-      hasCareerSummary: !!roadmap.careerSummary,
-      learningPathCount: roadmap.learningPath.length,
-    });
 
     return NextResponse.json<GenerateRoadmapResponse>({
       success: true,

@@ -19,11 +19,9 @@ export async function loadCourseData(): Promise<{
 }> {
   // 메모리 캐시 확인
   if (cachedData && cachedIndices) {
-    console.log('✅ Using cached course data');
     return { data: cachedData, indices: cachedIndices };
   }
 
-  console.log('📥 Loading course data from data.json...');
 
   try {
     // 병렬 처리: 데이터 로드 + 세션 스토리지 확인
@@ -39,17 +37,12 @@ export async function loadCourseData(): Promise<{
     const jsonData = await response.json();
     cachedData = jsonData.강의시간표 as CourseData[];
 
-    console.log(`✅ Loaded ${cachedData.length} courses`);
-
     // 인덱스 처리
     if (sessionIndices) {
-      console.log('✅ Using cached indices from session storage');
       cachedIndices = sessionIndices;
     } else {
-      console.log('🔨 Creating search indices...');
       cachedIndices = await createIndices(cachedData);
       saveIndicesToSession(cachedIndices);
-      console.log('✅ Indices created and cached');
     }
 
     return { data: cachedData, indices: cachedIndices };
@@ -66,5 +59,4 @@ export function clearCache(): void {
   cachedData = null;
   cachedIndices = null;
   sessionStorage.removeItem('chatbot_indices');
-  console.log('🗑️ Cache cleared');
 }

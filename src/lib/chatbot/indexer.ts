@@ -138,11 +138,6 @@ function extractKeywords(text: string): string[] {
     .filter(w => w.length >= 2);
   keywords.push(...koreanWords);
 
-  // 디버그: 자료구조 포함 시 로그
-  if (text.includes('자료구조')) {
-    console.log('🔍 Keyword extraction:', text, '→', keywords);
-  }
-
   return keywords;
 }
 
@@ -203,7 +198,6 @@ export function loadIndicesFromSession(): SearchIndices | null {
 
     // 버전 체크: 버전이 다르면 캐시 무효화
     if (parsed.version !== INDEX_VERSION) {
-      console.log(`🔄 Index version mismatch (stored: ${parsed.version}, current: ${INDEX_VERSION}). Rebuilding indices...`);
       sessionStorage.removeItem('chatbot_indices');
       return null;
     }

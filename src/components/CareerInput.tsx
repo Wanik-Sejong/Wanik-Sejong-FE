@@ -59,10 +59,6 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
 
     const trimmedGoal = careerGoalPrompt.trim();
 
-    console.log('🎯 Career goal submitted:', {
-      length: trimmedGoal.length,
-      preview: trimmedGoal.substring(0, 50) + (trimmedGoal.length > 50 ? '...' : ''),
-    });
 
     setIsSubmitting(true);
 

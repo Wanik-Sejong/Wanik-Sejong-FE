@@ -73,10 +73,9 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         .then(() => {
           searchEngineRef.current = engine;
           setIsInitialized(true);
-          console.log('✅ Chatbot initialized');
         })
         .catch((error) => {
-          console.error('❌ Failed to initialize chatbot:', error);
+          console.error('Failed to initialize chatbot:', error);
           setMessages((prev) => [
             ...prev,
             {
@@ -119,8 +118,8 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
           width: Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH),
           height: Math.min(Math.max(height, MIN_HEIGHT), maxHeight),
         });
-      } catch (e) {
-        console.error('Failed to restore window size:', e);
+      } catch {
+        // Failed to restore window size
       }
     }
   }, []);
@@ -227,8 +226,6 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
       const searchResult = await searchEngineRef.current.search(userMessage);
       const relevantCourses = searchResult.courses;
 
-      console.log('🔍 Local search found:', relevantCourses.length, 'courses');
-
       // 2단계: AI 서비스로 자연어 응답 생성 시도
       const aiResponse = await aiServiceRef.current.sendMessage(
         userMessage,
@@ -240,7 +237,6 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
 
       if (aiResponse.success && aiResponse.message) {
         // AI 응답 성공
-        console.log('✅ AI response received');
         setMessages((prev) => [
           ...prev,
           {
@@ -252,7 +248,6 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         ]);
       } else if (aiResponse.fallbackToLocalSearch) {
         // AI 실패 → Fallback: 로컬 검색 결과 사용
-        console.log('⚠️ AI failed, using local search fallback');
         const markdown = responseGeneratorRef.current.generateMarkdown(
           userMessage,
           searchResult
@@ -279,7 +274,7 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         ]);
       }
     } catch (error) {
-      console.error('❌ Chatbot error:', error);
+      console.error('Chatbot error:', error);
 
       // 에러 시에도 1초 지연
       await new Promise((resolve) => setTimeout(resolve, 1000));

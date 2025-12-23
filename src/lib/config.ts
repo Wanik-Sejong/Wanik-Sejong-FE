@@ -64,13 +64,6 @@ export const config = {
  * Validate required environment variables
  */
 export function validateConfig() {
-  console.log('🔍 Environment Variables Check:');
-  console.log('  NEXT_PUBLIC_USE_MOCK:', process.env.NEXT_PUBLIC_USE_MOCK);
-  console.log('  NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
-  console.log('  GEMINI_API_KEY:', typeof window === 'undefined'
-    ? (process.env.GEMINI_API_KEY ? '✅ Set' : '❌ Not set')
-    : '🔒 Server-only (hidden from client)'
-  );
 
   // 서버 사이드에서만 검증
   if (typeof window === 'undefined') {
@@ -105,12 +98,4 @@ export function getApiSource(): 'mock' | 'backend' | 'local' {
  * Log current configuration (for debugging)
  */
 export function logConfig() {
-  console.log('🔧 Configuration:', {
-    mode: getMode(),
-    apiSource: getApiSource(),
-    useMock: config.useMock,
-    backendEnabled: config.backend.enabled,
-    backendUrl: config.backend.baseUrl,
-    hasApiKey: !!config.gemini.apiKey,
-  });
 }

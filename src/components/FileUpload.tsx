@@ -23,48 +23,19 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       if (!file) return;
 
       // 🔍 디버깅: 파일 정보 출력
-      console.log('📁 업로드된 파일 정보:', {
-        이름: file.name,
-        크기: `${(file.size / 1024).toFixed(2)} KB`,
-        타입: file.type,
-        최종수정: new Date(file.lastModified).toLocaleString(),
-      });
 
       setFileName(file.name);
       setError(null);
       setUploading(true);
 
       try {
-        console.log('📤 Calling parseExcel API...');
         const result = await parseExcel(file);
 
-        console.log('📥 parseExcel result:', {
-          success: result.success,
-          hasData: !!result.data,
-          error: result.error,
-        });
 
         if (result.success && result.data) {
-          console.log('✅ Excel parsing successful:', {
-            courses: result.data.courses.length,
-            totalCredits: result.data.totalCredits,
-            totalMajorCredits: result.data.totalMajorCredits,
-            totalGeneralCredits: result.data.totalGeneralCredits,
-            averageGPA: result.data.averageGPA,
-          });
 
           // Log first 3 courses for verification
           if (result.data.courses.length > 0) {
-            console.log('📚 Sample Courses (first 3):',
-              result.data.courses.slice(0, 3).map(course => ({
-                code: course.courseCode,
-                name: course.courseName,
-                type: course.courseType,
-                credits: course.credits,
-                grade: course.grade,
-                gradePoint: course.gradePoint,
-              }))
-            );
           } else {
             console.warn('⚠️ Warning: No courses parsed from Excel file!');
           }
@@ -253,7 +224,6 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
   );
 
   function handleUseTestData() {
-    console.log('🧪 Using test data...');
 
     const testData: TranscriptData = {
       courses: [
@@ -324,11 +294,6 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       averageGPA: 4.2,
     };
 
-    console.log('✅ Test data created:', {
-      courses: testData.courses.length,
-      totalCredits: testData.totalCredits,
-      averageGPA: testData.averageGPA,
-    });
 
     setFileName('test-data.xlsx');
     setError(null);

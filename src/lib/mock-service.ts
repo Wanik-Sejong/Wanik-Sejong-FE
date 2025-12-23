@@ -103,7 +103,6 @@ function getMockRoadmap(careerPath: string): Roadmap {
  * In dev mode, returns mock transcript data
  */
 export async function mockParseExcel(file: File): Promise<ParseExcelResponse> {
-  console.log('📝 [Mock] Parsing Excel file:', file.name);
 
   // Simulate processing time
   await delay(1000);
@@ -132,11 +131,6 @@ export async function mockGenerateRoadmap(
   transcript: TranscriptData,
   careerGoal: string
 ): Promise<GenerateRoadmapResponse> {
-  console.log('🤖 [Mock] Generating roadmap for:', careerGoal);
-  console.log('📊 [Mock] Transcript:', {
-    courses: transcript.courses.length,
-    credits: transcript.totalCredits,
-  });
 
   // Simulate AI processing time
   await delay(2000);

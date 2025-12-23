@@ -33,7 +33,6 @@ export function downloadMarkdownFile(content: string, filename: string): void {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    console.log('✅ Markdown file downloaded:', filename);
   } catch (error) {
     console.error('❌ Failed to download markdown file:', error);
     throw error;
@@ -65,7 +64,6 @@ export function downloadTextFile(
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    console.log('✅ Text file downloaded:', filename);
   } catch (error) {
     console.error('❌ Failed to download text file:', error);
     throw error;
@@ -96,7 +94,6 @@ export function downloadJsonFile(data: unknown, filename: string): void {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    console.log('✅ JSON file downloaded:', filename);
   } catch (error) {
     console.error('❌ Failed to download JSON file:', error);
     throw error;
