@@ -29,16 +29,10 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
-  const [messages, setMessages] = useState<ChatMessageType[]>([
-    {
-      role: 'assistant',
-      content:
-        '안녕하세요! 🎓 세박사입니다.\n\n궁금한 과목, 교수님, 시간을 검색해보세요!',
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [hasInitialMessage, setHasInitialMessage] = useState(false);
 
   // 리사이징 관련 state
   const [windowSize, setWindowSize] = useState({
@@ -54,6 +48,21 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
   const aiServiceRef = useRef(new AIChatService());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const resizeStartPos = useRef({ x: 0, y: 0, width: 0, height: 0 });
+
+  // 초기 메시지 추가 (클라이언트에서만)
+  useEffect(() => {
+    if (!hasInitialMessage) {
+      setMessages([
+        {
+          role: 'assistant',
+          content:
+            '안녕하세요! 🎓 세박사입니다.\n\n궁금한 과목, 교수님, 시간을 검색해보세요!',
+          timestamp: new Date(),
+        },
+      ]);
+      setHasInitialMessage(true);
+    }
+  }, [hasInitialMessage]);
 
   // 검색 엔진 초기화
   useEffect(() => {
