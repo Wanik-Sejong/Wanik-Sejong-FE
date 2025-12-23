@@ -1,16 +1,14 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { FileUpload } from '@/components/FileUpload';
 import { CareerInput } from '@/components/CareerInput';
 import { Hero } from '@/components/ui/Hero';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { SejongColors } from '@/styles/colors';
 import { generateRoadmap } from '@/lib/api-client';
-import { config, getMode, validateConfig } from '@/lib/config';
 import type { TranscriptData, Roadmap } from '@/lib/types';
 
 export default function HomePage() {
@@ -19,14 +17,7 @@ export default function HomePage() {
   const [transcriptData, setTranscriptData] = useState<TranscriptData | null>(null);
   const [generating, setGenerating] = useState(false);
 
-  // Debug: Log configuration on mount
-  useEffect(() => {
-    console.log('🏠 HomePage mounted - Validating configuration...');
-    validateConfig();
-  }, []);
-
   const handleUploadSuccess = useCallback((data: TranscriptData) => {
-    console.log('Upload success:', data);
     setTranscriptData(data);
     setStep('career');
   }, []);
@@ -164,13 +155,6 @@ export default function HomePage() {
 
       {/* Main Content */}
       <section id="main-content" className="max-w-7xl mx-auto px-4 py-16">
-        {/* Mode Indicator */}
-        <div className="flex justify-center mb-8">
-          <Badge variant={config.useMock ? 'gold' : 'primary'} dot>
-            {config.useMock ? '개발 모드 (Mock Data)' : '프로덕션 모드 (Real API)'}
-          </Badge>
-        </div>
-
         {/* Progress Steps */}
         <div className="flex justify-center items-center gap-4 mb-12">
           <div className="flex items-center gap-2">

@@ -9,15 +9,6 @@ const useMockEnv = process.env.NEXT_PUBLIC_USE_MOCK;
 const isExternalBackend = apiUrl.includes('hackathon.yeo-li.com') ||
                           (!apiUrl.includes('localhost') && !apiUrl.includes('127.0.0.1'));
 
-// Debug: Log environment variables at module load time
-if (typeof window !== 'undefined') {
-  console.log('🔍 [Client] Environment variables loaded:', {
-    NEXT_PUBLIC_USE_MOCK: useMockEnv,
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    isExternalBackend,
-  });
-}
-
 export const config = {
   /**
    * Use mock data instead of real APIs
