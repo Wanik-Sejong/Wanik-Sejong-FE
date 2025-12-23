@@ -148,7 +148,7 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
           </div>
 
           <p className="text-xs text-gray-600 mt-2">
-            💡 관심 있는 분야를 선택하면 더 정확한 로드맵을 받을 수 있습니다
+            관심 있는 분야를 선택하면 더 정확한 로드맵을 받을 수 있습니다
           </p>
         </div>
 
@@ -174,13 +174,13 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
             loading={loading}
             className="min-w-50"
           >
-            {loading ? '로드맵 생성 중...' : 'AI 로드맵 생성하기 🚀'}
+            {loading ? '로드맵 생성 중...' : 'AI 로드맵 생성하기'}
           </Button>
         </div>
 
         {/* Info Note */}
         <div className="text-center text-sm text-gray-500 pt-4 border-t border-gray-200">
-          <p>⏱️ AI 로드맵 생성에는 약 10-20초가 소요됩니다</p>
+          <p>AI 로드맵 생성에는 약 10-20초가 소요됩니다</p>
         </div>
       </form>
     </Card>

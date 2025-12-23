@@ -44,6 +44,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className={`
               w-full px-4 py-3 rounded-lg border
+              text-gray-900 placeholder:text-gray-400
               transition-all duration-200
               focus:outline-none focus:ring-2 focus:ring-offset-1
               disabled:opacity-50 disabled:cursor-not-allowed
@@ -114,6 +115,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           rows={rows}
           className={`
             w-full px-4 py-3 rounded-lg border
+            text-gray-900 placeholder:text-gray-400
             transition-all duration-200
             focus:outline-none focus:ring-2 focus:ring-offset-1
             disabled:opacity-50 disabled:cursor-not-allowed
@@ -176,6 +178,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           className={`
             w-full px-4 py-3 rounded-lg border
+            text-gray-900
             appearance-none
             bg-white
             transition-all duration-200

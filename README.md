@@ -212,15 +212,24 @@ npm start
 
 ---
 
-## 📝 API 엔드포인트 (프로덕션)
+## 📝 API 문서
 
-### POST /api/parse-excel
+### 완전한 API 문서
+
+프로덕션 모드로 전환하거나 API를 통합할 때 필요한 상세 문서:
+
+- **[API Documentation](claudedocs/API_DOCUMENTATION.md)** - 완전한 API 스펙, Request/Response 예제, 에러 처리
+- **[GitHub Actions Secrets 설정](claudedocs/GITHUB_ACTIONS_SECRETS.md)** - CI/CD 환경 변수 설정 가이드
+
+### 빠른 참조: API 엔드포인트
+
+#### POST /api/parse-excel
 
 성적표 Excel 파일을 파싱하여 과목 데이터 추출
 
 **Request**:
-- Content-Type: multipart/form-data
-- Body: file (Excel)
+- Content-Type: `multipart/form-data`
+- Body: `file` (Excel)
 
 **Response**:
 ```json
@@ -234,7 +243,7 @@ npm start
 }
 ```
 
-### POST /api/generate-roadmap
+#### POST /api/generate-roadmap
 
 AI 기반 맞춤형 학습 로드맵 생성
 
@@ -263,6 +272,8 @@ AI 기반 맞춤형 학습 로드맵 생성
   }
 }
 ```
+
+**상세 정보**: [API Documentation](claudedocs/API_DOCUMENTATION.md) 참조
 
 ---
 
@@ -309,5 +320,3 @@ src/components/ui/MyComponent.tsx
 [src/app/api/generate-roadmap/route.ts](src/app/api/generate-roadmap/route.ts)의 `createRoadmapPrompt` 함수 수정
 
 ---
-
-**Happy Hacking! 🚀**

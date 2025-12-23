@@ -34,11 +34,11 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
   const timelineItems = useMemo(
     () =>
       learningPath.map((phase, index) => ({
-        icon: ['📚', '🎓', '💻', '🚀'][index % 4],
+        icon: ['1️⃣', '2️⃣', '3️⃣', '4️⃣'][index % 4],
         title: phase.period,
         subtitle: phase.goal,
         description: `
-**📖 추천 과목 (${phase.courses.length}개)**
+**추천 과목 (${phase.courses.length}개)**
 ${phase.courses
   .map(
     (course) =>
@@ -48,11 +48,11 @@ ${phase.courses
 
 ${
   phase.activities && phase.activities.length > 0
-    ? `\n**🎯 추가 활동**\n${phase.activities.map((act) => `• ${act}`).join('\n')}`
+    ? `\n**추가 활동**\n${phase.activities.map((act) => `• ${act}`).join('\n')}`
     : ''
 }
 
-${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
+${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
         `.trim(),
         date: phase.effort,
         status: (index === 0 ? 'active' : index < learningPath.length - 1 ? 'pending' : 'pending') as
@@ -68,7 +68,7 @@ ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
       {/* Header */}
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4" style={{ color: SejongColors.primary }}>
-          나만의 학습 로드맵 🎓
+          나만의 학습 로드맵
         </h1>
         <p className="text-gray-600">
           AI가 분석한 맞춤형 커리어 로드맵입니다
@@ -80,14 +80,11 @@ ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
 
       {/* Career Summary */}
       <Card shadow="xl" padding="lg">
-        <div className="flex items-start gap-4 mb-4">
-          <div className="text-4xl">🎯</div>
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-3" style={{ color: SejongColors.primary }}>
-              진로 요약
-            </h2>
-            <p className="text-gray-700 leading-relaxed">{careerSummary}</p>
-          </div>
+        <div>
+          <h2 className="text-2xl font-bold mb-3" style={{ color: SejongColors.primary }}>
+            진로 요약
+          </h2>
+          <p className="text-gray-700 leading-relaxed">{careerSummary}</p>
         </div>
       </Card>
 
@@ -95,17 +92,13 @@ ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Strengths */}
         <Card shadow="lg" padding="lg" className="border-l-4" style={{ borderLeftColor: SejongColors.primary }}>
-          <div className="flex items-start gap-3 mb-4">
-            <div className="text-3xl">💪</div>
-            <h3 className="text-xl font-bold" style={{ color: SejongColors.primary }}>
-              현재 강점
-            </h3>
-          </div>
+          <h3 className="text-xl font-bold mb-4" style={{ color: SejongColors.primary }}>
+            현재 강점
+          </h3>
           <ul className="space-y-2">
             {currentSkills.strengths.map((strength, index) => (
-              <li key={index} className="flex items-start gap-2 text-gray-700">
-                <span className="text-green-500 mt-1">✓</span>
-                <span>{strength}</span>
+              <li key={index} className="text-gray-700">
+                {strength}
               </li>
             ))}
           </ul>
@@ -113,17 +106,13 @@ ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
 
         {/* Gaps */}
         <Card shadow="lg" padding="lg" className="border-l-4" style={{ borderLeftColor: SejongColors.gold }}>
-          <div className="flex items-start gap-3 mb-4">
-            <div className="text-3xl">📈</div>
-            <h3 className="text-xl font-bold" style={{ color: SejongColors.gold }}>
-              보완 필요 영역
-            </h3>
-          </div>
+          <h3 className="text-xl font-bold mb-4" style={{ color: SejongColors.gold }}>
+            보완 필요 영역
+          </h3>
           <ul className="space-y-2">
             {currentSkills.gaps.map((gap, index) => (
-              <li key={index} className="flex items-start gap-2 text-gray-700">
-                <span className="text-orange-500 mt-1">→</span>
-                <span>{gap}</span>
+              <li key={index} className="text-gray-700">
+                {gap}
               </li>
             ))}
           </ul>
@@ -213,15 +202,12 @@ ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
       {/* Additional Advice */}
       {advice && (
         <Card shadow="xl" padding="lg" className="bg-linear-to-br from-primary-50 to-white">
-          <div className="flex items-start gap-4">
-            <div className="text-4xl">💡</div>
-            <div className="flex-1">
-              <h3 className="text-2xl font-bold mb-4" style={{ color: SejongColors.primary }}>
-                추가 조언
-              </h3>
-              <div className="prose prose-gray max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{advice}</ReactMarkdown>
-              </div>
+          <div>
+            <h3 className="text-2xl font-bold mb-4" style={{ color: SejongColors.primary }}>
+              추가 조언
+            </h3>
+            <div className="prose prose-gray max-w-none prose-p:text-gray-800 prose-li:text-gray-800 prose-strong:text-gray-900">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{advice}</ReactMarkdown>
             </div>
           </div>
         </Card>
@@ -230,11 +216,11 @@ ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
       {/* Action Buttons */}
       <div className="flex justify-center gap-4 pt-8">
         <Button variant="outline" size="lg" onClick={() => window.print()}>
-          📄 PDF로 저장
+          PDF로 저장
         </Button>
         {onReset && (
           <Button variant="primary" size="lg" onClick={onReset}>
-            🔄 새 로드맵 생성
+            새 로드맵 생성
           </Button>
         )}
       </div>
@@ -242,7 +228,7 @@ ${phase.effort ? `⏱️ **예상 학습량**: ${phase.effort}` : ''}
       {/* Footer Note */}
       <div className="text-center text-sm text-gray-500 pb-8">
         <p>
-          💡 이 로드맵은 AI가 생성한 추천사항입니다. 실제 수강 계획은 담당 교수님 및 학과
+          이 로드맵은 AI가 생성한 추천사항입니다. 실제 수강 계획은 담당 교수님 및 학과
           사무실과 상담하여 결정하세요.
         </p>
       </div>

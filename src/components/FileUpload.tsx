@@ -172,7 +172,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
 
       {/* Info */}
       <div className="mt-6 text-center text-sm text-gray-500">
-        <p>💡 Tip: 세종대학교 포털에서 다운로드한 성적표 엑셀 파일을 사용하세요.</p>
+        <p>Tip: 세종대학교 포털에서 다운로드한 성적표 엑셀 파일을 사용하세요.</p>
       </div>
     </div>
   );

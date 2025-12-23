@@ -20,7 +20,7 @@ export default function HomePage() {
   const [generating, setGenerating] = useState(false);
 
   const handleUploadSuccess = useCallback((data: TranscriptData) => {
-    console.log('✅ Upload success:', data);
+    console.log('Upload success:', data);
     setTranscriptData(data);
     setStep('career');
   }, []);
@@ -50,7 +50,7 @@ export default function HomePage() {
         setGenerating(false);
       }
     } catch (error) {
-      console.error('❌ Roadmap generation error:', error);
+      console.error('Roadmap generation error:', error);
       alert('로드맵 생성 중 오류가 발생했습니다.');
       setGenerating(false);
     }
@@ -93,7 +93,7 @@ export default function HomePage() {
               size="lg"
               onClick={handleScrollToContent}
             >
-              시작하기 🚀
+              시작하기
             </Button>
             <Button
               variant="outline"
