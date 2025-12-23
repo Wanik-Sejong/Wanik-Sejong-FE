@@ -7,16 +7,16 @@ export const config = {
   /**
    * Use mock data instead of real APIs
    * - Development: true (fully local)
-   * - Production: false (real OpenAI API)
+   * - Production: false (real Gemini API)
    */
   useMock: process.env.NEXT_PUBLIC_USE_MOCK === 'true',
 
   /**
-   * OpenAI API configuration
+   * Google Gemini API configuration
    */
-  openai: {
-    apiKey: process.env.OPENAI_API_KEY || '',
-    model: 'gpt-4o',
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY || '',
+    model: 'gemini-2.0-flash-exp',
     temperature: 0.7,
     maxTokens: 2000,
   },
@@ -33,9 +33,9 @@ export const config = {
  * Validate required environment variables
  */
 export function validateConfig() {
-  if (!config.useMock && !config.openai.apiKey) {
+  if (!config.useMock && !config.gemini.apiKey) {
     console.warn(
-      '⚠️ OPENAI_API_KEY is not set. Production mode requires an API key.'
+      '⚠️ GEMINI_API_KEY is not set. Production mode requires an API key.'
     );
   }
 }
@@ -54,6 +54,6 @@ export function logConfig() {
   console.log('🔧 Configuration:', {
     mode: getMode(),
     useMock: config.useMock,
-    hasApiKey: !!config.openai.apiKey,
+    hasApiKey: !!config.gemini.apiKey,
   });
 }

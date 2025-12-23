@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { config } from '@/lib/config';
 import type {
   RoadmapRequest,
@@ -7,9 +7,27 @@ import type {
   Roadmap,
 } from '@/lib/types';
 
+// Import mock roadmap data
+import roadmapBackend from '@/mocks/roadmap-backend.json';
+import roadmapFrontend from '@/mocks/roadmap-frontend.json';
+import roadmapServer from '@/mocks/roadmap-server.json';
+
+/**
+ * Get mock roadmap based on career path
+ */
+function getMockRoadmap(careerPath: string): Roadmap {
+  const mockData: Record<string, Roadmap> = {
+    backend: roadmapBackend as Roadmap,
+    frontend: roadmapFrontend as Roadmap,
+    server: roadmapServer as Roadmap,
+  };
+
+  return mockData[careerPath] || mockData.backend;
+}
+
 /**
  * POST /api/generate-roadmap
- * Generate AI-powered learning roadmap using OpenAI GPT-4o
+ * Generate AI-powered learning roadmap using Google Gemini 2.0
  */
 export async function POST(request: NextRequest) {
   try {
@@ -38,48 +56,55 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check OpenAI API key
-    if (!config.openai.apiKey) {
+    // Check if mock mode is enabled
+    const useMockData = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
+
+    if (useMockData) {
+      const roadmap = getMockRoadmap(careerGoal.careerPath);
+      return NextResponse.json<GenerateRoadmapResponse>({
+        success: true,
+        data: {
+          ...roadmap,
+          generatedAt: new Date().toISOString(),
+        },
+        message: 'Mock 로드맵 반환 완료',
+      });
+    }
+
+    // Check Gemini API key
+    if (!config.gemini.apiKey) {
       return NextResponse.json<GenerateRoadmapResponse>(
         {
           success: false,
-          error: 'OpenAI API 키가 설정되지 않았습니다.',
+          error: 'Gemini API 키가 설정되지 않았습니다.',
         },
         { status: 500 }
       );
     }
 
-    // Initialize OpenAI client
-    const openai = new OpenAI({
-      apiKey: config.openai.apiKey,
+    // Initialize Gemini client
+    const genAI = new GoogleGenerativeAI(config.gemini.apiKey);
+    const model = genAI.getGenerativeModel({
+      model: config.gemini.model,
+      generationConfig: {
+        temperature: config.gemini.temperature,
+        maxOutputTokens: config.gemini.maxTokens,
+        responseMimeType: 'application/json',
+      },
     });
 
     // Create prompt
-    const prompt = createRoadmapPrompt(transcript, careerGoal);
+    const systemPrompt = `당신은 세종대학교의 진로 상담 전문가입니다. 학생의 이수 과목과 희망 진로를 분석하여 맞춤형 학습 로드맵을 제공합니다. 응답은 반드시 유효한 JSON 형식이어야 합니다.`;
+    const userPrompt = createRoadmapPrompt(transcript, careerGoal);
+    const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
 
-    // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: config.openai.model,
-      messages: [
-        {
-          role: 'system',
-          content: `당신은 세종대학교의 진로 상담 전문가입니다. 학생의 이수 과목과 희망 진로를 분석하여 맞춤형 학습 로드맵을 제공합니다. 응답은 반드시 유효한 JSON 형식이어야 합니다.`,
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: config.openai.temperature,
-      max_tokens: config.openai.maxTokens,
-      response_format: { type: 'json_object' },
-    });
-
-    // Parse response
-    const responseText = completion.choices[0]?.message?.content;
+    // Call Gemini API
+    const result = await model.generateContent(fullPrompt);
+    const response = result.response;
+    const responseText = response.text();
 
     if (!responseText) {
-      throw new Error('OpenAI 응답이 비어있습니다.');
+      throw new Error('Gemini 응답이 비어있습니다.');
     }
 
     const roadmapData = JSON.parse(responseText);

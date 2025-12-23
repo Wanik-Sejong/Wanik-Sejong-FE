@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Textarea } from './ui/Input';
+import { Textarea } from './ui/Input';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { Tag } from './ui/Badge';
@@ -12,6 +12,17 @@ interface CareerInputProps {
   onSubmit: (careerGoal: CareerGoal) => void;
   loading?: boolean;
 }
+
+const SUGGESTED_CAREERS = [
+  '백엔드 개발자',
+  '프론트엔드 개발자',
+  '풀스택 개발자',
+  '데이터 사이언티스트',
+  'AI/ML 엔지니어',
+  '게임 개발자',
+  '모바일 앱 개발자',
+  'DevOps 엔지니어',
+];
 
 const SUGGESTED_INTERESTS = [
   'AI/ML',
@@ -31,6 +42,7 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
   const [interests, setInterests] = useState<string[]>([]);
   const [additionalInfo, setAdditionalInfo] = useState('');
   const [errors, setErrors] = useState<{ careerPath?: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddInterest = (interest: string) => {
     if (!interests.includes(interest)) {
@@ -53,7 +65,7 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) return;
@@ -64,7 +76,17 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
       additionalInfo: additionalInfo.trim() || undefined,
     };
 
+    // Activate local loading state
+    setIsSubmitting(true);
+
+    // 5-second delay
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    // Submit to parent
     onSubmit(careerGoal);
+
+    // Reset loading state after submission
+    setIsSubmitting(false);
   };
 
   return (
@@ -82,31 +104,58 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
 
         {/* Career Path Input */}
         <div>
-          <Input
-            label="희망 진로"
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            희망 진로 <span className="text-red-500">*</span>
+          </label>
+
+          {/* Text Input */}
+          <input
             type="text"
             value={careerPath}
-            onChange={(e) => setCareerPath(e.target.value)}
-            placeholder="예: AI/ML 엔지니어, 백엔드 개발자, 데이터 사이언티스트"
-            error={errors.careerPath}
-            required
-            fullWidth
-            leftIcon={
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-            }
+            onChange={(e) => {
+              setCareerPath(e.target.value);
+              setErrors({});
+            }}
+            placeholder="예: 백엔드 개발자, AI/ML 엔지니어 등"
+            className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all text-gray-900 placeholder:text-gray-400"
+            style={{
+              borderColor: errors.careerPath
+                ? '#ef4444'
+                : careerPath
+                  ? SejongColors.primary
+                  : SejongColors.border.medium,
+              boxShadow: careerPath ? `0 0 0 3px rgba(227, 6, 19, 0.1)` : 'none',
+            }}
           />
+
+          {errors.careerPath && (
+            <p className="mt-2 text-sm text-red-600">{errors.careerPath}</p>
+          )}
+
+          {/* Suggested Careers */}
+          <div className="mt-4">
+            <p className="text-sm text-gray-600 mb-2">추천 진로 (클릭하여 입력)</p>
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTED_CAREERS.map((career) => (
+                <button
+                  key={career}
+                  type="button"
+                  onClick={() => {
+                    setCareerPath(career);
+                    setErrors({});
+                  }}
+                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-primary-500 hover:text-primary-700 hover:bg-primary-50 transition-colors cursor-pointer"
+                  style={{
+                    borderColor: careerPath === career ? SejongColors.primary : SejongColors.border.medium,
+                    backgroundColor: careerPath === career ? 'rgba(227, 6, 19, 0.05)' : 'transparent',
+                    color: careerPath === career ? SejongColors.primary : undefined,
+                  }}
+                >
+                  {career}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Interests */}
@@ -171,10 +220,10 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
             type="submit"
             variant="primary"
             size="lg"
-            loading={loading}
+            loading={loading || isSubmitting}
             className="min-w-50"
           >
-            {loading ? '로드맵 생성 중...' : 'AI 로드맵 생성하기'}
+            {loading || isSubmitting ? '로드맵 생성 중...' : 'AI 로드맵 생성하기'}
           </Button>
         </div>
 
