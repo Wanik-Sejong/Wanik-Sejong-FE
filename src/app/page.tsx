@@ -9,7 +9,7 @@ import { Hero } from '@/components/ui/Hero';
 import { Button } from '@/components/ui/Button';
 import { SejongColors } from '@/styles/colors';
 import { generateRoadmap } from '@/lib/api-client';
-import type { TranscriptData, Roadmap } from '@/lib/types';
+import type { TranscriptData } from '@/lib/types';
 
 export default function HomePage() {
   const router = useRouter();
@@ -29,34 +29,16 @@ export default function HomePage() {
       return;
     }
 
-    console.log('🚀 Starting roadmap generation...');
-    console.log('📊 Transcript data:', {
-      courses: transcriptData.courses.length,
-      totalCredits: transcriptData.totalCredits,
-    });
-    console.log('🎯 Career goal:', careerGoal);
-
     setGenerating(true);
 
     try {
       const result = await generateRoadmap(transcriptData, careerGoal);
 
-      console.log('📥 Roadmap generation result:', {
-        success: result.success,
-        hasData: !!result.data,
-        error: result.error,
-      });
-
       if (result.success && result.data) {
-        console.log('✅ Roadmap generated successfully');
-
         // Store roadmap in sessionStorage for roadmap page
         sessionStorage.setItem('roadmap', JSON.stringify(result.data));
         sessionStorage.setItem('transcript', JSON.stringify(transcriptData));
         sessionStorage.setItem('careerGoal', careerGoal);
-
-        console.log('💾 Data saved to sessionStorage');
-        console.log('🔄 Navigating to roadmap page...');
 
         // Navigate to roadmap page
         router.push('/roadmap');
@@ -76,20 +58,10 @@ export default function HomePage() {
           }
         }
 
-        console.error('❌ Roadmap generation failed:', result.error);
         alert(errorMessage);
         setGenerating(false);
       }
     } catch (error) {
-      console.error('❌ Roadmap generation error:', error);
-
-      // Detailed error logging
-      if (error instanceof Error) {
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-      }
-
       // User-friendly error message
       let userMessage = '로드맵 생성 중 예상치 못한 오류가 발생했습니다.';
       if (error instanceof TypeError) {
@@ -134,22 +106,13 @@ export default function HomePage() {
           </div>
         }
         actions={
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleScrollToContent}
-            >
-              시작하기
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => router.push('/showcase')}
-            >
-              컴포넌트 쇼케이스
-            </Button>
-          </div>
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={handleScrollToContent}
+          >
+            시작하기
+          </Button>
         }
       />
 
@@ -210,7 +173,7 @@ export default function HomePage() {
             <div className="animate-fade-in">
               <FileUpload
                 onUploadSuccess={handleUploadSuccess}
-                onUploadError={(error) => console.error('Upload error:', error)}
+                onUploadError={() => {}}
               />
             </div>
           )}

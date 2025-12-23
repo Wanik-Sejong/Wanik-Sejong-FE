@@ -250,7 +250,7 @@ export class LocalSearchEngine {
     // 점수순 정렬
     const ranked = Array.from(scoreMap.values()).sort((a, b) => b.score - a.score);
 
-    // 상위 20개만 반환
-    return ranked.slice(0, 20).map(item => item.course);
+    // 상위 30개로 확장 (AI가 더 많은 컨텍스트를 가질 수 있도록)
+    return ranked.slice(0, 30).map(item => item.course);
   }
 }
