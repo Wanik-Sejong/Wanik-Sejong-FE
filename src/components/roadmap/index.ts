@@ -17,3 +17,4 @@ export type { TabType } from './RoadmapTabs';
 // Course Display Components
 export { CourseCard } from './CourseCard';
 export { TechStackCard } from './TechStackCard';
+export { ActivityCard } from './ActivityCard';

@@ -77,6 +77,58 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * Extract year and semester from row data
+ * Tries multiple column name variations
+ */
+function extractYearAndSemester(row: any): {
+  year: number;
+  semester: number;
+} {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const currentSemester = currentMonth >= 3 && currentMonth <= 8 ? 1 : 2;
+
+  // Try to extract year
+  let year = currentYear;
+  const yearField =
+    row['이수연도'] ||
+    row['연도'] ||
+    row['년도'] ||
+    row['학년도'] ||
+    row['Year'] ||
+    row['year'];
+
+  if (yearField) {
+    const parsedYear = parseInt(String(yearField), 10);
+    if (!isNaN(parsedYear) && parsedYear >= 2000 && parsedYear <= 2100) {
+      year = parsedYear;
+    }
+  }
+
+  // Try to extract semester
+  let semester = currentSemester;
+  const semesterField =
+    row['이수학기'] ||
+    row['학기'] ||
+    row['Semester'] ||
+    row['semester'] ||
+    row['Term'] ||
+    row['term'];
+
+  if (semesterField) {
+    const semesterStr = String(semesterField).toLowerCase();
+    if (semesterStr.includes('1') || semesterStr.includes('first') || semesterStr.includes('봄') || semesterStr.includes('spring')) {
+      semester = 1;
+    } else if (semesterStr.includes('2') || semesterStr.includes('second') || semesterStr.includes('가을') || semesterStr.includes('fall')) {
+      semester = 2;
+    }
+  }
+
+  return { year, semester };
+}
+
+/**
  * Parse raw Excel data into TranscriptData structure
  * Adapted to match the new API specification
  */
@@ -99,6 +151,11 @@ function parseTranscriptData(rawData: any[]): TranscriptData {
 
     if (!courseName) continue;
 
+    // Extract year and semester (for backend compatibility)
+    // Note: Frontend Course type doesn't include these fields yet
+    // This data is available for future backend integration
+    const { year, semester } = extractYearAndSemester(row);
+
     const course: Course = {
       courseCode: row['학수번호'] || '',
       courseName,
@@ -111,6 +168,11 @@ function parseTranscriptData(rawData: any[]): TranscriptData {
       gradePoint: parseGradePoint(row['평점'] || grade),
       departmentCode: row['개설학과코드'] || null,
     };
+
+    // Store year/semester in course object for potential backend use
+    // These fields will be used by backend adapter
+    (course as any).completedYear = year;
+    (course as any).completedSemester = semester;
 
     courses.push(course);
     totalCredits += credits;
@@ -125,9 +187,10 @@ function parseTranscriptData(rawData: any[]): TranscriptData {
   }
 
   // Calculate average GPA
-  const averageGPA = totalCredits > 0
-    ? Math.round((totalGradePoints / totalCredits) * 100) / 100
-    : 0;
+  const averageGPA =
+    totalCredits > 0
+      ? Math.round((totalGradePoints / totalCredits) * 100) / 100
+      : 0;
 
   return {
     courses,

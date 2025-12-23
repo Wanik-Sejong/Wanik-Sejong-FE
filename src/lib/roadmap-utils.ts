@@ -1,6 +1,7 @@
 import { SejongColors } from '@/styles/colors';
 import type { RoadmapPhase as LearningPhase } from '@/lib/types';
 import type { RoadmapPhase as TimelinePhase, Activity } from '@/types/roadmap.types';
+import type { IconName } from '@/types/icon.types';
 
 /**
  * 단계별 색상 매핑 (세종 컬러 시스템 기반)
@@ -20,9 +21,18 @@ const PHASE_GRADIENTS = [
 ];
 
 /**
- * 단계별 아이콘 매핑
+ * 단계별 아이콘 매핑 (이모지 사용)
  */
-const PHASE_ICONS = ['📚', '💡', '🚀', '🎯', '⭐', '🏆'];
+const PHASE_ICONS: string[] = ['📚', '💡', '🚀', '🎯', '⭐', '🏆'];
+
+/**
+ * 우선순위별 아이콘 매핑
+ */
+const PRIORITY_ICONS: Record<'high' | 'medium' | 'low', IconName> = {
+  high: 'star',
+  medium: 'sparkles',
+  low: 'pin',
+};
 
 /**
  * 단계 인덱스에 따른 색상 반환 (순환)
@@ -60,10 +70,11 @@ export function convertLearningPathToPhases(
 
     // 1. 추천 과목 추가
     phase.courses.forEach((course, idx) => {
-      const priorityEmoji = course.priority === 'high' ? '⭐' : course.priority === 'medium' ? '✨' : '📌';
+      const priorityIcon = PRIORITY_ICONS[course.priority || 'low'];
       activities.push({
         id: `course-${index}-${idx}`,
-        description: `${priorityEmoji} ${course.name} (${course.type})`,
+        description: `${course.name} (${course.type})`,
+        iconName: priorityIcon,
       });
     });
 
@@ -72,7 +83,8 @@ export function convertLearningPathToPhases(
       phase.techStacks.forEach((tech, idx) => {
         activities.push({
           id: `tech-${index}-${idx}`,
-          description: `💻 ${tech.name} - ${tech.category}`,
+          description: `${tech.name} - ${tech.category}`,
+          iconName: 'laptop',
         });
       });
     }
@@ -82,7 +94,8 @@ export function convertLearningPathToPhases(
       phase.activities.forEach((activity, idx) => {
         activities.push({
           id: `activity-${index}-${idx}`,
-          description: `🎯 ${activity}`,
+          description: activity,
+          iconName: 'target',
         });
       });
     }

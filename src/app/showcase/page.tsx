@@ -74,7 +74,7 @@ export default function ShowcasePage() {
             title="플랫폼 이용 의사"
             value="87.3%"
             description="설문 응답자 중 87.3%가 진로 분석 플랫폼 이용 의사 보유"
-            icon="📊"
+            iconName="map"
             trend="up"
             trendValue="12.3%"
           />
@@ -96,7 +96,7 @@ export default function ShowcasePage() {
             title="취향 플랫폼스 광용하는 것에"
             value="60.7%"
             description="플랫폼을 통한 체계적인 진로 설계 선호"
-            icon="🎯"
+            iconName="target"
           />
         </div>
       </section>
@@ -140,21 +140,21 @@ export default function ShowcasePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
           <FeatureCard
-            icon="📍"
+            iconName="map"
             title="Various"
             description="내외부 타인 정보 없이 검증된 취향 정보를 기반으로 신뢰도 높은 맞춤 장소 추천"
             accent="primary"
           />
 
           <FeatureCard
-            icon="👍"
+            iconName="star"
             title="Reliable"
             description="검증 취향별 커뮤니티에서 신뢰도 높은 사용자의 리뷰 정보 제공"
             accent="secondary"
           />
 
           <FeatureCard
-            icon="👣"
+            iconName="rocket"
             title="Motivating"
             description="커뮤니티를 통한 사용자 간 정보 교류로 학습 의욕 증진 및 정보 활용도 제고"
             accent="gold"

@@ -35,17 +35,70 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       setUploading(true);
 
       try {
+        console.log('📤 Calling parseExcel API...');
         const result = await parseExcel(file);
 
+        console.log('📥 parseExcel result:', {
+          success: result.success,
+          hasData: !!result.data,
+          error: result.error,
+        });
+
         if (result.success && result.data) {
+          console.log('✅ Excel parsing successful:', {
+            courses: result.data.courses.length,
+            totalCredits: result.data.totalCredits,
+            totalMajorCredits: result.data.totalMajorCredits,
+            totalGeneralCredits: result.data.totalGeneralCredits,
+            averageGPA: result.data.averageGPA,
+          });
+
+          // Log first 3 courses for verification
+          if (result.data.courses.length > 0) {
+            console.log('📚 Sample Courses (first 3):',
+              result.data.courses.slice(0, 3).map(course => ({
+                code: course.courseCode,
+                name: course.courseName,
+                type: course.courseType,
+                credits: course.credits,
+                grade: course.grade,
+                gradePoint: course.gradePoint,
+              }))
+            );
+          } else {
+            console.warn('⚠️ Warning: No courses parsed from Excel file!');
+          }
+
           onUploadSuccess(result.data);
         } else {
           const errorMsg = result.error || '파일 업로드 중 오류가 발생했습니다.';
+          console.error('❌ Excel parsing failed:', errorMsg);
           setError(errorMsg);
           onUploadError?.(errorMsg);
         }
       } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';
+        console.error('❌ Exception during file upload:', err);
+
+        // Detailed error logging
+        if (err instanceof Error) {
+          console.error('Error details:', {
+            name: err.name,
+            message: err.message,
+            stack: err.stack,
+          });
+        }
+
+        let errorMsg = '알 수 없는 오류가 발생했습니다.';
+        if (err instanceof Error) {
+          if (err.message.includes('network') || err.message.includes('fetch')) {
+            errorMsg = '🌐 네트워크 연결을 확인해주세요.';
+          } else if (err.message.includes('timeout')) {
+            errorMsg = '⏱️ 요청 시간이 초과되었습니다. 다시 시도해주세요.';
+          } else {
+            errorMsg = err.message;
+          }
+        }
+
         setError(errorMsg);
         onUploadError?.(errorMsg);
       } finally {
@@ -182,6 +235,103 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       <div className="mt-6 text-center text-sm text-gray-500">
         <p>Tip: 세종대학교 포털에서 다운로드한 성적표 엑셀 파일을 사용하세요.</p>
       </div>
+
+      {/* Test Data Button (Development Only) */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mt-4 text-center">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleUseTestData}
+            disabled={uploading}
+          >
+            🧪 테스트 데이터 사용 (개발용)
+          </Button>
+        </div>
+      )}
     </div>
   );
+
+  function handleUseTestData() {
+    console.log('🧪 Using test data...');
+
+    const testData: TranscriptData = {
+      courses: [
+        {
+          courseCode: 'CS101',
+          courseName: '프로그래밍 기초',
+          courseType: '전공필수',
+          teachingArea: null,
+          selectedArea: null,
+          credits: 3.0,
+          evaluationType: '절대평가',
+          grade: 'A+',
+          gradePoint: 4.5,
+          departmentCode: 'COMP',
+        },
+        {
+          courseCode: 'CS201',
+          courseName: '자료구조',
+          courseType: '전공필수',
+          teachingArea: null,
+          selectedArea: null,
+          credits: 3.0,
+          evaluationType: '절대평가',
+          grade: 'A',
+          gradePoint: 4.0,
+          departmentCode: 'COMP',
+        },
+        {
+          courseCode: 'CS301',
+          courseName: '데이터베이스',
+          courseType: '전공선택',
+          teachingArea: null,
+          selectedArea: null,
+          credits: 3.0,
+          evaluationType: '절대평가',
+          grade: 'A+',
+          gradePoint: 4.5,
+          departmentCode: 'COMP',
+        },
+        {
+          courseCode: 'CS302',
+          courseName: '운영체제',
+          courseType: '전공선택',
+          teachingArea: null,
+          selectedArea: null,
+          credits: 3.0,
+          evaluationType: '절대평가',
+          grade: 'A',
+          gradePoint: 4.0,
+          departmentCode: 'COMP',
+        },
+        {
+          courseCode: 'GE101',
+          courseName: '영어회화',
+          courseType: '교양필수',
+          teachingArea: null,
+          selectedArea: '외국어',
+          credits: 2.0,
+          evaluationType: '절대평가',
+          grade: 'B+',
+          gradePoint: 3.5,
+          departmentCode: 'GE',
+        },
+      ],
+      totalCredits: 65.0,
+      totalMajorCredits: 50.0,
+      totalGeneralCredits: 15.0,
+      averageGPA: 4.2,
+    };
+
+    console.log('✅ Test data created:', {
+      courses: testData.courses.length,
+      totalCredits: testData.totalCredits,
+      averageGPA: testData.averageGPA,
+    });
+
+    setFileName('test-data.xlsx');
+    setError(null);
+    onUploadSuccess(testData);
+  }
 }

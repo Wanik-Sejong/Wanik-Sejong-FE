@@ -12,6 +12,7 @@ import TypingIndicator from './TypingIndicator';
 import ResizeHandle from './ResizeHandle';
 import { LocalSearchEngine } from '@/lib/chatbot/search-engine';
 import { ResponseGenerator } from '@/lib/chatbot/response-generator';
+import { AIChatService } from '@/lib/chatbot/ai-service';
 import type { ChatMessage as ChatMessageType } from '@/lib/chatbot/types';
 import { SejongColors } from '@/styles/colors';
 
@@ -50,6 +51,7 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
 
   const searchEngineRef = useRef<LocalSearchEngine | null>(null);
   const responseGeneratorRef = useRef(new ResponseGenerator());
+  const aiServiceRef = useRef(new AIChatService());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const resizeStartPos = useRef({ x: 0, y: 0, width: 0, height: 0 });
 
@@ -212,30 +214,63 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
     setIsSearching(true);
 
     try {
-      // 검색 실행
-      const result = await searchEngineRef.current.search(userMessage);
+      // 1단계: 로컬 검색으로 관련 과목 찾기
+      const searchResult = await searchEngineRef.current.search(userMessage);
+      const relevantCourses = searchResult.courses;
 
-      // 응답 생성
-      const markdown = responseGeneratorRef.current.generateMarkdown(
+      console.log('🔍 Local search found:', relevantCourses.length, 'courses');
+
+      // 2단계: AI 서비스로 자연어 응답 생성 시도
+      const aiResponse = await aiServiceRef.current.sendMessage(
         userMessage,
-        result
+        relevantCourses
       );
 
-      // 1초 지연 후 응답 표시
+      // 1초 지연 (UX 개선)
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // 챗봇 응답 추가
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: markdown,
-          timestamp: new Date(),
-          searchResult: result,
-        },
-      ]);
+      if (aiResponse.success && aiResponse.message) {
+        // AI 응답 성공
+        console.log('✅ AI response received');
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: aiResponse.message || '',
+            timestamp: new Date(),
+            searchResult,
+          },
+        ]);
+      } else if (aiResponse.fallbackToLocalSearch) {
+        // AI 실패 → Fallback: 로컬 검색 결과 사용
+        console.log('⚠️ AI failed, using local search fallback');
+        const markdown = responseGeneratorRef.current.generateMarkdown(
+          userMessage,
+          searchResult
+        );
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: markdown,
+            timestamp: new Date(),
+            searchResult,
+          },
+        ]);
+      } else {
+        // 완전 실패
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: aiResponse.error || '응답 생성에 실패했습니다. 다시 시도해주세요.',
+            timestamp: new Date(),
+          },
+        ]);
+      }
     } catch (error) {
-      console.error('❌ Search error:', error);
+      console.error('❌ Chatbot error:', error);
 
       // 에러 시에도 1초 지연
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -244,7 +279,7 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         ...prev,
         {
           role: 'assistant',
-          content: '죄송합니다. 검색 중 오류가 발생했습니다. 다시 시도해주세요.',
+          content: '죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.',
           timestamp: new Date(),
         },
       ]);

@@ -1,5 +1,7 @@
 import { ReactNode, CSSProperties } from 'react';
 import { SejongColors } from '@/styles/colors';
+import { Icon } from '@/components/ui/Icon';
+import type { IconName } from '@/types/icon.types';
 
 interface CardProps {
   children: ReactNode;
@@ -50,7 +52,7 @@ interface StatCardProps {
   title: string;
   value: string | number;
   description?: string;
-  icon?: ReactNode;
+  iconName?: IconName;
   trend?: 'up' | 'down';
   trendValue?: string;
   gradient?: boolean;
@@ -63,7 +65,7 @@ export function StatCard({
   title,
   value,
   description,
-  icon,
+  iconName,
   trend,
   trendValue,
   gradient = false,
@@ -109,8 +111,10 @@ export function StatCard({
       )}
 
       <div className="relative z-10">
-        {icon && (
-          <div className={`mb-4 text-4xl ${gradient ? 'opacity-90' : ''}`}>{icon}</div>
+        {iconName && (
+          <div className={`mb-4 ${gradient ? 'opacity-90' : ''}`}>
+            <Icon name={iconName} size={40} color={gradient ? 'white' : SejongColors.primary} />
+          </div>
         )}
 
         <h3 className={`text-sm font-medium mb-2 ${gradient ? 'text-white/90' : 'text-gray-600'}`}>
@@ -151,7 +155,7 @@ export function StatCard({
 }
 
 interface FeatureCardProps {
-  icon: ReactNode;
+  iconName: IconName;
   title: string;
   description?: string;
   content?: ReactNode;
@@ -161,7 +165,7 @@ interface FeatureCardProps {
 }
 
 export function FeatureCard({
-  icon,
+  iconName,
   title,
   description,
   content,
@@ -175,12 +179,6 @@ export function FeatureCard({
     gold: SejongColors.gold
   };
 
-  const bgColors = {
-    primary: SejongColors.primary50,
-    secondary: SejongColors.secondary50,
-    gold: SejongColors.gold50
-  };
-
   const alignmentClasses = {
     left: 'text-left',
     center: 'text-center'
@@ -188,25 +186,20 @@ export function FeatureCard({
 
   return (
     <Card hover shadow="lg" className={alignmentClasses[align]}>
-      {/* Icon Circle */}
-      <div
-        className={`w-20 h-20 mb-6 rounded-full flex items-center justify-center text-4xl ${
-          align === 'center' ? 'mx-auto' : ''
-        }`}
-        style={{ backgroundColor: bgColors[accent] }}
-      >
-        {icon}
+      {/* Icon */}
+      <div className={`mb-6 ${align === 'center' ? 'flex justify-center' : ''}`}>
+        <Icon name={iconName} size={64} color={accentColors[accent]} />
       </div>
 
       <h3
-        className="text-xl font-bold mb-3"
+        className="text-2xl font-extrabold mb-3"
         style={{ color: accentColors[accent] }}
       >
         {title}
       </h3>
 
       {description && (
-        <p className="text-gray-600 leading-relaxed mb-4">{description}</p>
+        <p className="text-gray-800 font-medium leading-relaxed mb-4">{description}</p>
       )}
 
       {content && <div className="mt-4">{content}</div>}
@@ -214,14 +207,19 @@ export function FeatureCard({
       {items && items.length > 0 && (
         <ul className="space-y-3 mt-4">
           {items.map((item, index) => (
-            <li key={index} className="text-gray-700 flex items-start gap-3">
+            <li key={index} className="flex items-start gap-3">
               <span
-                className="mt-1 text-lg shrink-0"
+                className="mt-0.5 text-xl shrink-0 font-bold"
                 style={{ color: accentColors[accent] }}
               >
                 ✓
               </span>
-              <span className="leading-relaxed text-left">{item}</span>
+              <span
+                className="leading-relaxed text-left font-semibold"
+                style={{ color: accentColors[accent] }}
+              >
+                {item}
+              </span>
             </li>
           ))}
         </ul>

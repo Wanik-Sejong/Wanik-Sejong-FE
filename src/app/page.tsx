@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { FileUpload } from '@/components/FileUpload';
@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SejongColors } from '@/styles/colors';
 import { generateRoadmap } from '@/lib/api-client';
-import { config, getMode } from '@/lib/config';
-import type { TranscriptData, CareerGoal, Roadmap } from '@/lib/types';
+import { config, getMode, validateConfig } from '@/lib/config';
+import type { TranscriptData, Roadmap } from '@/lib/types';
 
 export default function HomePage() {
   const router = useRouter();
@@ -19,39 +19,93 @@ export default function HomePage() {
   const [transcriptData, setTranscriptData] = useState<TranscriptData | null>(null);
   const [generating, setGenerating] = useState(false);
 
+  // Debug: Log configuration on mount
+  useEffect(() => {
+    console.log('🏠 HomePage mounted - Validating configuration...');
+    validateConfig();
+  }, []);
+
   const handleUploadSuccess = useCallback((data: TranscriptData) => {
     console.log('Upload success:', data);
     setTranscriptData(data);
     setStep('career');
   }, []);
 
-  const handleCareerSubmit = async (careerGoal: CareerGoal) => {
+  const handleCareerSubmit = async (careerGoal: string) => {
     if (!transcriptData) {
       alert('성적표 데이터가 없습니다. 다시 업로드해주세요.');
       setStep('upload');
       return;
     }
 
+    console.log('🚀 Starting roadmap generation...');
+    console.log('📊 Transcript data:', {
+      courses: transcriptData.courses.length,
+      totalCredits: transcriptData.totalCredits,
+    });
+    console.log('🎯 Career goal:', careerGoal);
+
     setGenerating(true);
 
     try {
       const result = await generateRoadmap(transcriptData, careerGoal);
 
+      console.log('📥 Roadmap generation result:', {
+        success: result.success,
+        hasData: !!result.data,
+        error: result.error,
+      });
+
       if (result.success && result.data) {
+        console.log('✅ Roadmap generated successfully');
+
         // Store roadmap in sessionStorage for roadmap page
         sessionStorage.setItem('roadmap', JSON.stringify(result.data));
         sessionStorage.setItem('transcript', JSON.stringify(transcriptData));
-        sessionStorage.setItem('careerGoal', JSON.stringify(careerGoal));
+        sessionStorage.setItem('careerGoal', careerGoal);
+
+        console.log('💾 Data saved to sessionStorage');
+        console.log('🔄 Navigating to roadmap page...');
 
         // Navigate to roadmap page
         router.push('/roadmap');
       } else {
-        alert(result.error || '로드맵 생성 중 오류가 발생했습니다.');
+        // Detailed error message based on error type
+        let errorMessage = '로드맵 생성 중 오류가 발생했습니다.';
+
+        if (result.error) {
+          if (result.error.includes('timeout')) {
+            errorMessage = '⏱️ 요청 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.';
+          } else if (result.error.includes('network') || result.error.includes('fetch')) {
+            errorMessage = '🌐 네트워크 연결을 확인해주세요.';
+          } else if (result.error.includes('API key') || result.error.includes('unauthorized')) {
+            errorMessage = '🔑 API 인증에 실패했습니다. 관리자에게 문의하세요.';
+          } else {
+            errorMessage = `❌ ${result.error}`;
+          }
+        }
+
+        console.error('❌ Roadmap generation failed:', result.error);
+        alert(errorMessage);
         setGenerating(false);
       }
     } catch (error) {
-      console.error('Roadmap generation error:', error);
-      alert('로드맵 생성 중 오류가 발생했습니다.');
+      console.error('❌ Roadmap generation error:', error);
+
+      // Detailed error logging
+      if (error instanceof Error) {
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+
+      // User-friendly error message
+      let userMessage = '로드맵 생성 중 예상치 못한 오류가 발생했습니다.';
+      if (error instanceof TypeError) {
+        userMessage = '🔧 데이터 형식 오류가 발생했습니다. 페이지를 새로고침 후 다시 시도해주세요.';
+      }
+
+      alert(userMessage);
       setGenerating(false);
     }
   };

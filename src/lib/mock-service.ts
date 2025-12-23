@@ -9,7 +9,6 @@ import roadmapFrontend from '@/mocks/roadmap-frontend.json';
 import roadmapServer from '@/mocks/roadmap-server.json';
 import type {
   TranscriptData,
-  CareerGoal,
   Roadmap,
   ParseExcelResponse,
   GenerateRoadmapResponse,
@@ -127,13 +126,13 @@ export async function mockParseExcel(file: File): Promise<ParseExcelResponse> {
 
 /**
  * Mock: Generate AI roadmap
- * In dev mode, returns mock roadmap with user's career goal
+ * In dev mode, returns mock roadmap with user's career goal prompt
  */
 export async function mockGenerateRoadmap(
   transcript: TranscriptData,
-  careerGoal: CareerGoal
+  careerGoal: string
 ): Promise<GenerateRoadmapResponse> {
-  console.log('🤖 [Mock] Generating roadmap for:', careerGoal.careerPath);
+  console.log('🤖 [Mock] Generating roadmap for:', careerGoal);
   console.log('📊 [Mock] Transcript:', {
     courses: transcript.courses.length,
     credits: transcript.totalCredits,
@@ -143,7 +142,7 @@ export async function mockGenerateRoadmap(
   await delay(2000);
 
   // Validate inputs
-  if (!careerGoal.careerPath || careerGoal.careerPath.trim().length === 0) {
+  if (!careerGoal || careerGoal.trim().length === 0) {
     return {
       success: false,
       error: '희망 진로를 입력해주세요.',
@@ -157,20 +156,16 @@ export async function mockGenerateRoadmap(
     };
   }
 
-  // Get appropriate mock roadmap based on career path
-  const baseMockRoadmap = getMockRoadmap(careerGoal.careerPath);
+  // Get appropriate mock roadmap based on career goal prompt
+  const baseMockRoadmap = getMockRoadmap(careerGoal);
 
   // Customize mock roadmap with user's career goal
   const customizedRoadmap: Roadmap = {
     ...baseMockRoadmap,
-    careerSummary: `${careerGoal.careerPath}는 ${baseMockRoadmap.careerSummary.split('는 ')[1]}`,
+    careerSummary: `${careerGoal.substring(0, 50)}... ${baseMockRoadmap.careerSummary.split('는 ')[1] || baseMockRoadmap.careerSummary}`,
+    advice: `입력하신 진로 목표:\n"${careerGoal}"\n\n${baseMockRoadmap.advice}`,
     generatedAt: new Date().toISOString(),
   } as Roadmap;
-
-  // If user provided interests, add them to the advice
-  if (careerGoal.interests && careerGoal.interests.length > 0) {
-    customizedRoadmap.advice = `관심 분야: ${careerGoal.interests.join(', ')}\n\n${customizedRoadmap.advice}`;
-  }
 
   return {
     success: true,

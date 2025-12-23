@@ -54,8 +54,8 @@ export function RoadmapTabs({ activeTab, onTabChange }: RoadmapTabsProps) {
               />
             )}
 
-            <span className="relative z-10 flex items-center gap-2">
-              <span>{tab.icon}</span>
+            <span className="relative flex items-center gap-2">
+              <span className="text-xl">{tab.icon}</span>
               <span>{tab.label}</span>
             </span>
           </motion.button>

@@ -1,7 +1,10 @@
+import type { IconName } from './icon.types';
+
 export interface Activity {
   id: string;
   description: string;
   isCompleted?: boolean;
+  iconName?: IconName;
 }
 
 export interface RoadmapPhase {

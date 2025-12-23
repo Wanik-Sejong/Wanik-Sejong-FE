@@ -1,4 +1,6 @@
-# 백엔드 API 문서
+# Backend API Documentation
+
+**완익세종 (Wanik-Sejong)** 백엔드 API 문서
 
 **Base URL**: `https://hackathon.yeo-li.com`
 **API Version**: v0
@@ -6,54 +8,54 @@
 
 ---
 
-## 📋 목차
+## 목차
 
-1. [API 개요](#api-개요)
+1. [개요](#개요)
 2. [인증](#인증)
-3. [엔드포인트](#엔드포인트)
+3. [API 엔드포인트](#api-엔드포인트)
    - [POST /api/parse-excel](#post-apiparse-excel)
    - [POST /api/generate-roadmap](#post-apigenerate-roadmap)
+   - [POST /api/weight-hints](#post-apiweight-hints)
+   - [POST /api/subjects/score](#post-apisubjectsscore)
 4. [데이터 모델](#데이터-모델)
 5. [에러 처리](#에러-처리)
+6. [사용 예시](#사용-예시)
 
 ---
 
-## API 개요
+## 개요
 
-완익세종 백엔드 API는 성적표 파싱과 AI 기반 로드맵 생성을 제공합니다.
+완익세종 백엔드 API는 학생의 성적표 파싱, AI 기반 로드맵 생성, 과목 추천 및 가중치 힌트 제공 기능을 제공합니다.
 
 ### 주요 기능
-- ✅ 엑셀 성적표 파싱 및 구조화
-- ✅ AI 기반 맞춤형 학습 로드맵 생성
-- ✅ RESTful API 설계
-- ✅ JSON 응답 형식
+
+- **성적표 파싱**: Excel 파일 업로드를 통한 성적 데이터 추출
+- **AI 로드맵 생성**: 학생의 이수 과목과 진로 목표를 기반으로 맞춤형 학습 로드맵 생성
+- **과목 추천**: 진로 목표에 맞는 과목 추천 및 점수 부여
+- **가중치 힌트**: 진로별 과목 평가 가중치 규칙 제공
 
 ---
 
 ## 인증
 
-현재 버전에서는 별도의 인증이 필요하지 않습니다.
+현재 버전(v0)은 인증이 필요하지 않습니다.
 
 ---
 
-## 엔드포인트
+## API 엔드포인트
 
 ### POST /api/parse-excel
 
-엑셀 파일(.xlsx, .xls)을 업로드하여 성적표 데이터를 파싱합니다.
+Excel 파일(성적표)을 업로드하여 이수 과목 데이터를 파싱합니다.
 
 #### Request
 
-**HTTP Method**: `POST`
 **Content-Type**: `multipart/form-data`
 
 **Parameters**:
+- `file` (required, binary): Excel 파일 (.xlsx, .xls)
 
-| 이름 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| file | file (binary) | ✅ | 엑셀 성적표 파일 (.xlsx, .xls) |
-
-**Example Request**:
+**Example**:
 ```bash
 curl -X POST "https://hackathon.yeo-li.com/api/parse-excel" \
   -H "Content-Type: multipart/form-data" \
@@ -62,29 +64,43 @@ curl -X POST "https://hackathon.yeo-li.com/api/parse-excel" \
 
 #### Response
 
-**HTTP Status**: `200 OK`
+**Status**: 200 OK
 **Content-Type**: `application/json`
 
-**Response Schema**:
-```json
+**Schema**:
+```typescript
 {
-  "success": boolean,
-  "data": {
-    "courses": [
-      {
-        "courseCode": "string",        // 학수번호
-        "courseName": "string",        // 교과목명
-        "courseType": "string",        // 이수구분 (전필, 전선, 교필, 교선 등)
-        "teachingArea": "string",      // 교직영역
-        "selectedArea": "string",      // 선택영역
-        "credits": integer,            // 학점
-        "evaluationType": "string",    // 평가방식
-        "grade": "string",             // 등급 (A+, A, B+ 등)
-        "gradePoint": number,          // 평점 (0.0 ~ 4.5)
-        "departmentCode": "string"     // 개설학과코드
-      }
-    ]
-  }
+  success: boolean;
+  data?: ExcelParseResponseDTO;
+}
+```
+
+**ExcelParseResponseDTO**:
+```typescript
+{
+  courses: Course[];           // 이수 과목 목록
+  totalCredits: number;        // 총 학점 (double)
+  totalGeneralCredits: number; // 교양 총 학점 (double)
+  totalMajorCredits: number;   // 전공 총 학점 (double)
+  averageGPA: number;          // 평균 평점 (double)
+}
+```
+
+**Course**:
+```typescript
+{
+  completedYear: number;       // 이수 연도 (int32)
+  completedSemester: number;   // 이수 학기 (int32)
+  courseCode: string;          // 학수번호
+  courseName: string;          // 교과목명
+  courseType: string;          // 이수구분
+  teachingArea: string;        // 교직영역
+  selectedArea: string;        // 선택영역
+  credits: number;             // 학점 (double)
+  evaluationType: string;      // 평가방식
+  grade: string;               // 등급
+  gradePoint: number;          // 평점 (double)
+  departmentCode: string;      // 개설학과코드
 }
 ```
 
@@ -95,30 +111,24 @@ curl -X POST "https://hackathon.yeo-li.com/api/parse-excel" \
   "data": {
     "courses": [
       {
+        "completedYear": 2023,
+        "completedSemester": 1,
         "courseCode": "CS101",
-        "courseName": "C프로그래밍및실습",
-        "courseType": "전필",
+        "courseName": "프로그래밍 기초",
+        "courseType": "전공필수",
         "teachingArea": null,
         "selectedArea": null,
-        "credits": 3,
-        "evaluationType": "상대평가",
+        "credits": 3.0,
+        "evaluationType": "절대평가",
         "grade": "A+",
         "gradePoint": 4.5,
-        "departmentCode": "CSE"
-      },
-      {
-        "courseCode": "CS201",
-        "courseName": "자료구조",
-        "courseType": "전필",
-        "teachingArea": null,
-        "selectedArea": null,
-        "credits": 3,
-        "evaluationType": "상대평가",
-        "grade": "A",
-        "gradePoint": 4.0,
-        "departmentCode": "CSE"
+        "departmentCode": "COMP"
       }
-    ]
+    ],
+    "totalCredits": 65.0,
+    "totalGeneralCredits": 15.0,
+    "totalMajorCredits": 50.0,
+    "averageGPA": 4.2
   }
 }
 ```
@@ -127,91 +137,168 @@ curl -X POST "https://hackathon.yeo-li.com/api/parse-excel" \
 
 ### POST /api/generate-roadmap
 
-성적표 데이터와 진로 목표를 바탕으로 AI 기반 맞춤형 학습 로드맵을 생성합니다.
+학생의 이수 과목 데이터와 진로 목표를 기반으로 AI 맞춤형 학습 로드맵을 생성합니다.
 
 #### Request
 
-**HTTP Method**: `POST`
 **Content-Type**: `application/json`
 
-**Request Body Schema**:
+**Schema**:
 ```typescript
 {
-  "transcript": {
-    "courses": Course[],           // 이수 과목 목록
-    "totalCredits": number,         // 총 학점
-    "totalMajorCredits": number,    // 전공 학점
-    "totalGeneralCredits": number,  // 교양 학점
-    "averageGPA": number            // 평균 평점
-  },
-  "careerGoal": {
-    "careerPath": string,           // 희망 진로
-    "interests": string[],          // 관심 분야 (optional)
-    "additionalInfo": string        // 추가 정보 (optional)
-  }
+  transcript: Transcript;      // 이수 과목 데이터
+  careerGoal: string;         // 희망 진로 (프롬프트 형식)
+}
+```
+
+**Transcript**:
+```typescript
+{
+  courses: Course[];           // 이수 과목 목록 (Course 스키마 참조)
+  totalCredits: number;        // 총 학점 (double)
+  totalMajorCredits: number;   // 전공 총 학점 (int32)
+  totalGeneralCredits: number; // 교양 총 학점 (int32)
+  averageGPA: number;          // 평균 평점 (double)
 }
 ```
 
 **Example Request**:
-```bash
-curl -X POST "https://hackathon.yeo-li.com/api/generate-roadmap" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "transcript": {
-      "courses": [
-        {
-          "courseCode": "CS101",
-          "courseName": "C프로그래밍및실습",
-          "courseType": "전필",
-          "teachingArea": null,
-          "selectedArea": null,
-          "credits": 3,
-          "evaluationType": "상대평가",
-          "grade": "A+",
-          "gradePoint": 4.5,
-          "departmentCode": "CSE"
-        }
-      ],
-      "totalCredits": 60,
-      "totalMajorCredits": 36,
-      "totalGeneralCredits": 24,
-      "averageGPA": 4.2
-    },
-    "careerGoal": {
-      "careerPath": "백엔드 개발자",
-      "interests": ["Spring Boot", "데이터베이스", "클라우드"],
-      "additionalInfo": "대기업 취업을 목표로 하고 있습니다."
-    }
-  }'
+```json
+{
+  "transcript": {
+    "courses": [
+      {
+        "completedYear": 2023,
+        "completedSemester": 1,
+        "courseCode": "CS101",
+        "courseName": "프로그래밍 기초",
+        "courseType": "전공필수",
+        "teachingArea": null,
+        "selectedArea": null,
+        "credits": 3.0,
+        "evaluationType": "절대평가",
+        "grade": "A+",
+        "gradePoint": 4.5,
+        "departmentCode": "COMP"
+      }
+    ],
+    "totalCredits": 65.0,
+    "totalMajorCredits": 50,
+    "totalGeneralCredits": 15,
+    "averageGPA": 4.2
+  },
+  "careerGoal": "백엔드 개발자를 목표로 하고 있습니다. Spring Boot, 데이터베이스, 클라우드에 관심이 있으며, 대기업 취업을 희망합니다."
+}
 ```
 
 #### Response
 
-**HTTP Status**: `200 OK`
-**Content-Type**: `*/*` (JSON)
+**Status**: 200 OK
+**Content-Type**: `application/json` or `*/*`
 
-**Response Schema**:
+**Schema**:
 ```typescript
 {
-  "success": boolean,
-  "data": {
-    "careerSummary": string,        // 진로 요약 설명
-    "currentSkills": {
-      "strengths": string[],        // 현재 강점
-      "gaps": string[]              // 보완이 필요한 부분
-    },
-    "learningPath": [
-      {
-        "period": string,           // 기간 (예: "2025년 1학기")
-        "goal": string,             // 이 기간의 학습 목표
-        "courses": Course[],        // 추천 과목 목록
-        "activities": string[],     // 추가 활동
-        "effort": string            // 예상 학습량 (예: "주 10시간")
-      }
-    ],
-    "advice": string,               // 추가 조언
-    "generatedAt": string           // 생성 일시
-  }
+  success: boolean;
+  data?: RoadmapAiResponseDTO;
+}
+```
+
+**RoadmapAiResponseDTO**:
+```typescript
+{
+  careerSummary: string;                      // 진로 요약
+  currentSkills: CurrentSkills;               // 현재 역량 분석
+  coursePlan: CoursePlan[];                   // 학기별 수강 계획
+  extracurricularPlan: ExtracurricularPlan[]; // 비교과 활동 계획
+  advice: string;                             // 추가 조언
+  generatedAt: string;                        // 생성 일시
+  subjectRecommendations: SubjectRecommendations; // 과목 추천
+  weightHints: WeightHints;                   // 가중치 힌트
+}
+```
+
+**CurrentSkills**:
+```typescript
+{
+  strengths: string[];  // 강점
+  gaps: string[];       // 부족한 부분
+}
+```
+
+**CoursePlan**:
+```typescript
+{
+  period: string;       // 기간 (예: "2025년 1학기")
+  goal: string;         // 목표
+  courses: Course[];    // 추천 과목 목록
+  effort: string;       // 예상 학습량
+}
+```
+
+**ExtracurricularPlan**:
+```typescript
+{
+  period: string;       // 기간
+  goal: string;         // 목표
+  activities: string[]; // 추천 활동
+  effort: string;       // 예상 학습량
+}
+```
+
+**SubjectRecommendations**:
+```typescript
+{
+  matchedSectors: string[];    // 매칭된 분야
+  topN: number;                // 추천 과목 수 (int32)
+  subjects: ScoredSubject[];   // 점수가 매겨진 과목 목록
+}
+```
+
+**ScoredSubject**:
+```typescript
+{
+  subject: SubjectSummary;     // 과목 정보
+  score: number;               // 점수 (int32)
+  reasons: string[];           // 추천 이유
+}
+```
+
+**SubjectSummary**:
+```typescript
+{
+  courseCode: string;          // 학수번호
+  courseName: string;          // 교과목명
+  courseType: string;          // 이수구분
+  selectedArea: string;        // 선택영역
+  credits: number;             // 학점 (double)
+  gradeLevel: number;          // 학년 (int32)
+  offeringDepartmentMajor: string; // 개설학과전공
+  hostDepartment: string;      // 주관학과
+  lectureLanguage: string;     // 강의언어
+  courseFormat: string;        // 수업형태
+  schedule: string;            // 요일/교시
+  classroom: string;           // 강의실
+}
+```
+
+**WeightHints**:
+```typescript
+{
+  matchedSectors: string[];                    // 매칭된 분야
+  sectorKeywords: { [key: string]: string[] }; // 분야별 키워드
+  weightRules: WeightRule[];                   // 가중치 규칙
+  defaultN: number;                            // 기본 추천 수 (int32)
+  notes: string;                               // 참고사항
+}
+```
+
+**WeightRule**:
+```typescript
+{
+  rule: string;    // 규칙
+  score: number;   // 점수 (int32)
+  reason: string;  // 이유
 }
 ```
 
@@ -220,71 +307,164 @@ curl -X POST "https://hackathon.yeo-li.com/api/generate-roadmap" \
 {
   "success": true,
   "data": {
-    "careerSummary": "백엔드 개발자는 서버 측 로직, 데이터베이스, API 설계를 담당하는 직무입니다.",
+    "careerSummary": "백엔드 개발자는 서버 측 애플리케이션을 설계하고 구현하는 전문가입니다.",
     "currentSkills": {
-      "strengths": [
-        "C프로그래밍 기초 탄탄함",
-        "논리적 사고력 우수",
-        "높은 학업 성취도"
-      ],
-      "gaps": [
-        "웹 프레임워크 경험 부족",
-        "데이터베이스 실무 경험 필요",
-        "클라우드 인프라 지식 부족"
-      ]
+      "strengths": ["프로그래밍 기초", "자료구조 이해"],
+      "gaps": ["클라우드 경험", "대규모 시스템 설계"]
     },
-    "learningPath": [
+    "coursePlan": [
       {
         "period": "2025년 1학기",
-        "goal": "웹 개발 기초 및 Spring Framework 학습",
+        "goal": "백엔드 핵심 기술 습득",
         "courses": [
           {
+            "completedYear": 0,
+            "completedSemester": 0,
             "courseCode": "CS301",
-            "courseName": "웹프로그래밍",
-            "courseType": "전선",
-            "teachingArea": null,
-            "selectedArea": null,
-            "credits": 3,
-            "evaluationType": "상대평가",
-            "grade": null,
-            "gradePoint": null,
-            "departmentCode": "CSE"
-          },
-          {
-            "courseCode": "CS302",
             "courseName": "데이터베이스",
-            "courseType": "전필",
+            "courseType": "전공필수",
             "teachingArea": null,
             "selectedArea": null,
-            "credits": 3,
-            "evaluationType": "상대평가",
-            "grade": null,
-            "gradePoint": null,
-            "departmentCode": "CSE"
+            "credits": 3.0,
+            "evaluationType": "절대평가",
+            "grade": "",
+            "gradePoint": 0.0,
+            "departmentCode": "COMP"
           }
         ],
-        "activities": [
-          "Spring Boot 토이 프로젝트 구현",
-          "MySQL 실습 및 쿼리 최적화 연습",
-          "GitHub 포트폴리오 구축"
-        ],
-        "effort": "주 15시간 (12주)"
-      },
-      {
-        "period": "2025년 여름방학",
-        "goal": "실전 프로젝트 및 클라우드 경험",
-        "courses": [],
-        "activities": [
-          "인턴십 지원 및 참여",
-          "AWS 기초 자격증 취득",
-          "개인 프로젝트 배포 경험"
-        ],
-        "effort": "주 20시간 (8주)"
+        "effort": "주 15시간"
       }
     ],
-    "advice": "백엔드 개발자로 성장하기 위해서는 이론뿐만 아니라 실제 프로젝트 경험이 중요합니다. 학습과 병행하여 포트폴리오를 구축하세요.",
-    "generatedAt": "2025-01-15T10:30:00Z"
+    "extracurricularPlan": [
+      {
+        "period": "2025년 여름방학",
+        "goal": "실무 경험 축적",
+        "activities": ["백엔드 개발 인턴십", "오픈소스 프로젝트 기여"],
+        "effort": "주 20시간"
+      }
+    ],
+    "advice": "Spring Boot 공식 문서를 참고하여 실습 프로젝트를 진행하세요.",
+    "generatedAt": "2025-12-24T10:30:00Z",
+    "subjectRecommendations": {
+      "matchedSectors": ["백엔드", "서버"],
+      "topN": 5,
+      "subjects": [
+        {
+          "subject": {
+            "courseCode": "CS401",
+            "courseName": "클라우드 컴퓨팅",
+            "courseType": "전공선택",
+            "selectedArea": "IT융합",
+            "credits": 3.0,
+            "gradeLevel": 4,
+            "offeringDepartmentMajor": "컴퓨터공학",
+            "hostDepartment": "공과대학",
+            "lectureLanguage": "한국어",
+            "courseFormat": "이론+실습",
+            "schedule": "월/수 3-4교시",
+            "classroom": "공학관 301"
+          },
+          "score": 95,
+          "reasons": ["클라우드 기술 습득", "AWS/Azure 실습 포함"]
+        }
+      ]
+    },
+    "weightHints": {
+      "matchedSectors": ["백엔드", "서버"],
+      "sectorKeywords": {
+        "백엔드": ["Spring", "API", "데이터베이스"],
+        "서버": ["클라우드", "배포", "인프라"]
+      },
+      "weightRules": [
+        {
+          "rule": "데이터베이스 관련 과목 우선",
+          "score": 20,
+          "reason": "백엔드 필수 역량"
+        }
+      ],
+      "defaultN": 5,
+      "notes": "전공필수 과목을 우선적으로 이수하세요."
+    }
   }
+}
+```
+
+---
+
+### POST /api/weight-hints
+
+진로 목표에 따른 과목 평가 가중치 규칙을 제공합니다.
+
+#### Request
+
+**Content-Type**: `application/json`
+
+**Schema**:
+```typescript
+{
+  careerGoal: string;  // 희망 진로
+}
+```
+
+**Example Request**:
+```json
+{
+  "careerGoal": "백엔드 개발자"
+}
+```
+
+#### Response
+
+**Status**: 200 OK
+**Content-Type**: `application/json`
+
+**Schema**:
+```typescript
+{
+  success: boolean;
+  data?: WeightHintResponseDTO;
+}
+```
+
+**WeightHintResponseDTO**: (WeightHints와 동일한 구조)
+
+---
+
+### POST /api/subjects/score
+
+과목 목록에 대해 진로 목표 기반 점수를 부여합니다.
+
+#### Request
+
+**Content-Type**: `application/json`
+
+**Schema**:
+```typescript
+{
+  careerGoal: string;          // 희망 진로
+  subjects: SubjectSummary[];  // 평가할 과목 목록
+  topN?: number;               // 상위 N개 반환 (선택)
+}
+```
+
+#### Response
+
+**Status**: 200 OK
+**Content-Type**: `application/json`
+
+**Schema**:
+```typescript
+{
+  success: boolean;
+  data?: SubjectScoreResponseDTO;
+}
+```
+
+**SubjectScoreResponseDTO**:
+```typescript
+{
+  matchedSectors: string[];    // 매칭된 분야
+  subjects: ScoredSubject[];   // 점수가 매겨진 과목 목록
 }
 ```
 
@@ -292,20 +472,34 @@ curl -X POST "https://hackathon.yeo-li.com/api/generate-roadmap" \
 
 ## 데이터 모델
 
+### 공통 응답 래퍼
+
+모든 API 응답은 다음 구조를 따릅니다:
+
+```typescript
+interface ApiResponse<T> {
+  success: boolean;  // 성공 여부
+  data?: T;          // 응답 데이터 (성공 시)
+  error?: string;    // 에러 메시지 (실패 시)
+}
+```
+
 ### Course (과목 정보)
 
 ```typescript
 interface Course {
-  courseCode: string;        // 학수번호
-  courseName: string;        // 교과목명
-  courseType: string;        // 이수구분 (전필, 전선, 교필, 교선 등)
-  teachingArea: string | null;  // 교직영역
-  selectedArea: string | null;  // 선택영역
-  credits: number;           // 학점 (integer)
-  evaluationType: string;    // 평가방식
-  grade: string;             // 등급 (A+, A, B+ 등)
-  gradePoint: number;        // 평점 (0.0 ~ 4.5, double)
-  departmentCode: string;    // 개설학과코드
+  completedYear: number;       // 이수 연도 (int32)
+  completedSemester: number;   // 이수 학기 (int32, 1 또는 2)
+  courseCode: string;          // 학수번호
+  courseName: string;          // 교과목명
+  courseType: string;          // 이수구분 (전공필수, 전공선택, 교양필수, 교양선택 등)
+  teachingArea: string | null; // 교직영역
+  selectedArea: string | null; // 선택영역
+  credits: number;             // 학점 (double)
+  evaluationType: string;      // 평가방식
+  grade: string;               // 등급 (A+, A, B+ 등)
+  gradePoint: number;          // 평점 (double, 0.0 ~ 4.5)
+  departmentCode: string;      // 개설학과코드
 }
 ```
 
@@ -313,63 +507,40 @@ interface Course {
 
 ```typescript
 interface Transcript {
-  courses: Course[];              // 이수 과목 목록
-  totalCredits: number;           // 총 학점
-  totalMajorCredits: number;      // 전공 학점
-  totalGeneralCredits: number;    // 교양 학점
-  averageGPA: number;             // 평균 평점 (0.0 ~ 4.5)
+  courses: Course[];           // 이수 과목 목록
+  totalCredits: number;        // 총 학점 (double)
+  totalMajorCredits: number;   // 전공 총 학점 (int32)
+  totalGeneralCredits: number; // 교양 총 학점 (int32)
+  averageGPA: number;          // 평균 평점 (double)
 }
 ```
 
-### CareerGoal (진로 목표)
+### SubjectSummary (과목 요약 정보)
 
 ```typescript
-interface CareerGoal {
-  careerPath: string;      // 희망 진로 (필수)
-  interests: string[];     // 관심 분야 배열 (선택)
-  additionalInfo: string;  // 추가 정보 (선택)
+interface SubjectSummary {
+  courseCode: string;              // 학수번호
+  courseName: string;              // 교과목명
+  courseType: string;              // 이수구분
+  selectedArea: string;            // 선택영역
+  credits: number;                 // 학점 (double)
+  gradeLevel: number;              // 학년 (int32)
+  offeringDepartmentMajor: string; // 개설학과전공
+  hostDepartment: string;          // 주관학과
+  lectureLanguage: string;         // 강의언어
+  courseFormat: string;            // 수업형태
+  schedule: string;                // 요일/교시
+  classroom: string;               // 강의실
 }
 ```
 
-### CurrentSkills (현재 역량)
+### ScoredSubject (점수가 매겨진 과목)
 
 ```typescript
-interface CurrentSkills {
-  strengths: string[];  // 강점 목록
-  gaps: string[];       // 보완 필요 영역
-}
-```
-
-### LearningPath (학습 경로 단계)
-
-```typescript
-interface LearningPath {
-  period: string;         // 기간 (예: "2025년 1학기")
-  goal: string;           // 이 기간의 목표
-  courses: Course[];      // 추천 과목 목록
-  activities: string[];   // 추가 활동 (프로젝트, 자격증 등)
-  effort: string;         // 예상 학습량 (예: "주 10시간")
-}
-```
-
-### RoadmapAiResponseDTO (AI 로드맵 응답)
-
-```typescript
-interface RoadmapAiResponseDTO {
-  careerSummary: string;        // 진로 요약
-  currentSkills: CurrentSkills; // 현재 역량 분석
-  learningPath: LearningPath[]; // 학습 경로 (단계별)
-  advice: string;               // 추가 조언
-  generatedAt: string;          // 생성 일시 (ISO 8601)
-}
-```
-
-### ApiResponse (공통 응답 래퍼)
-
-```typescript
-interface ApiResponse<T> {
-  success: boolean;  // 성공 여부
-  data: T;          // 응답 데이터
+interface ScoredSubject {
+  subject: SubjectSummary;  // 과목 정보
+  score: number;            // 점수 (int32)
+  reasons: string[];        // 추천 이유
 }
 ```
 
@@ -379,84 +550,92 @@ interface ApiResponse<T> {
 
 ### 에러 응답 형식
 
-```json
+```typescript
 {
-  "success": false,
-  "error": "에러 메시지",
-  "code": "ERROR_CODE"
+  success: false;
+  error: string;  // 에러 메시지
 }
 ```
 
-### 주요 에러 코드
+### 일반적인 HTTP 상태 코드
 
-| HTTP Status | 설명 |
-|-------------|------|
-| 400 Bad Request | 잘못된 요청 (파일 형식 오류, 필수 파라미터 누락 등) |
-| 500 Internal Server Error | 서버 내부 오류 (AI 처리 실패, 데이터베이스 오류 등) |
+- `200 OK`: 요청 성공
+- `400 Bad Request`: 잘못된 요청 (필수 파라미터 누락, 유효하지 않은 데이터)
+- `500 Internal Server Error`: 서버 내부 오류
 
 ---
 
 ## 사용 예시
 
-### 전체 워크플로우
+### 1. 성적표 업로드 → AI 로드맵 생성 플로우
 
 ```typescript
-// 1. 엑셀 파일 업로드 및 파싱
+// Step 1: 성적표 업로드
 const formData = new FormData();
-formData.append('file', excelFile);
+formData.append('file', transcriptFile);
 
 const parseResponse = await fetch('https://hackathon.yeo-li.com/api/parse-excel', {
   method: 'POST',
-  body: formData
+  body: formData,
 });
 
-const { data: transcript } = await parseResponse.json();
+const parseResult = await parseResponse.json();
+// parseResult.data => ExcelParseResponseDTO
 
-// 2. 로드맵 생성 요청
+// Step 2: AI 로드맵 생성
 const roadmapResponse = await fetch('https://hackathon.yeo-li.com/api/generate-roadmap', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    transcript: {
-      ...transcript,
-      totalCredits: 60,
-      totalMajorCredits: 36,
-      totalGeneralCredits: 24,
-      averageGPA: 4.2
-    },
-    careerGoal: {
-      careerPath: '백엔드 개발자',
-      interests: ['Spring Boot', 'AWS'],
-      additionalInfo: '대기업 취업 희망'
-    }
-  })
+    transcript: parseResult.data,
+    careerGoal: '백엔드 개발자를 목표로 하고 있습니다. Spring Boot, 데이터베이스, 클라우드에 관심이 있으며, 대기업 취업을 희망합니다.',
+  }),
 });
 
-const { data: roadmap } = await roadmapResponse.json();
-console.log(roadmap);
+const roadmapResult = await roadmapResponse.json();
+// roadmapResult.data => RoadmapAiResponseDTO
+```
+
+### 2. 과목 점수 평가
+
+```typescript
+const scoreResponse = await fetch('https://hackathon.yeo-li.com/api/subjects/score', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    careerGoal: '백엔드 개발자',
+    subjects: [
+      {
+        courseCode: 'CS401',
+        courseName: '클라우드 컴퓨팅',
+        courseType: '전공선택',
+        // ... 기타 필드
+      },
+    ],
+    topN: 5,
+  }),
+});
+
+const scoreResult = await scoreResponse.json();
+// scoreResult.data => SubjectScoreResponseDTO
 ```
 
 ---
 
-## 참고사항
+## 변경 이력
 
-### API 제한사항
-- 파일 크기 제한: 최대 10MB (추정)
-- 요청 빈도 제한: 별도 제한 없음 (추정)
-
-### 지원 파일 형식
-- ✅ `.xlsx` (Excel 2007 이상)
-- ✅ `.xls` (Excel 97-2003)
-
-### 권장사항
-- 성적표 파일은 세종대학교 표준 양식 사용 권장
-- 진로 목표는 구체적으로 작성할수록 정확한 로드맵 생성 가능
-- `interests` 배열에 3-5개의 키워드 포함 권장
+- **2025-12-24**: Swagger 기반 완전 재작성 - 실제 백엔드 API 스키마 반영
+  - `/api/parse-excel`: 성적표 파싱 엔드포인트 추가
+  - `/api/generate-roadmap`: 요청/응답 스키마 업데이트 (careerGoal: string, subjectRecommendations, weightHints 추가)
+  - `/api/weight-hints`: 가중치 힌트 엔드포인트 추가
+  - `/api/subjects/score`: 과목 점수 평가 엔드포인트 추가
+  - Course 모델에 `completedYear`, `completedSemester` 필드 추가
+  - 모든 데이터 타입을 실제 백엔드 스키마에 맞게 조정 (int32, double 등)
 
 ---
 
-**문서 버전**: 1.0.0
-**최종 업데이트**: 2025-01-15
-**작성자**: Claude Code
+**문의**: 백엔드 API 관련 문의는 프로젝트 팀에 연락하세요.

@@ -94,13 +94,23 @@ function getMockRoadmap(careerPath: string): Roadmap {
  * Generate AI-powered learning roadmap using Google Gemini 2.0
  */
 export async function POST(request: NextRequest) {
+  console.log('🔵 API Route: /api/generate-roadmap - Request received');
+
   try {
     // Parse request body
     const body: RoadmapRequest = await request.json();
     const { transcript, careerGoal } = body;
 
+    console.log('📊 Request data:', {
+      hasCourses: !!transcript?.courses,
+      courseCount: transcript?.courses?.length || 0,
+      careerPath: careerGoal?.careerPath || 'not provided',
+      useMock: process.env.NEXT_PUBLIC_USE_MOCK,
+    });
+
     // Validate inputs
     if (!transcript || !transcript.courses || transcript.courses.length === 0) {
+      console.error('❌ Validation failed: No transcript data');
       return NextResponse.json<GenerateRoadmapResponse>(
         {
           success: false,
@@ -111,6 +121,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!careerGoal || !careerGoal.careerPath) {
+      console.error('❌ Validation failed: No career goal');
       return NextResponse.json<GenerateRoadmapResponse>(
         {
           success: false,
@@ -124,6 +135,7 @@ export async function POST(request: NextRequest) {
     const useMockData = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 
     if (useMockData) {
+      console.log('🎭 Using Mock data mode');
       const roadmap = getMockRoadmap(careerGoal.careerPath);
       return NextResponse.json<GenerateRoadmapResponse>({
         success: true,
@@ -137,6 +149,7 @@ export async function POST(request: NextRequest) {
 
     // Check Gemini API key
     if (!config.gemini.apiKey) {
+      console.error('❌ Gemini API key not configured');
       return NextResponse.json<GenerateRoadmapResponse>(
         {
           success: false,
@@ -145,6 +158,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    console.log('🤖 Calling Gemini API...');
 
     // Initialize Gemini client
     const genAI = new GoogleGenerativeAI(config.gemini.apiKey);
@@ -167,11 +182,24 @@ export async function POST(request: NextRequest) {
     const response = result.response;
     const responseText = response.text();
 
+    console.log('📥 Gemini API response received:', {
+      hasText: !!responseText,
+      textLength: responseText?.length || 0,
+    });
+
     if (!responseText) {
       throw new Error('Gemini 응답이 비어있습니다.');
     }
 
-    const roadmapData = JSON.parse(responseText);
+    let roadmapData;
+    try {
+      roadmapData = JSON.parse(responseText);
+      console.log('✅ JSON parsing successful');
+    } catch (parseError) {
+      console.error('❌ JSON parsing failed:', parseError);
+      console.error('Response text:', responseText.substring(0, 500));
+      throw new Error('Gemini 응답 파싱 실패: JSON 형식이 아닙니다.');
+    }
 
     // Validate and format roadmap
     const roadmap: Roadmap = {
@@ -182,17 +210,45 @@ export async function POST(request: NextRequest) {
       generatedAt: new Date().toISOString(),
     };
 
+    console.log('✅ Roadmap generated successfully:', {
+      hasCareerSummary: !!roadmap.careerSummary,
+      learningPathCount: roadmap.learningPath.length,
+    });
+
     return NextResponse.json<GenerateRoadmapResponse>({
       success: true,
       data: roadmap,
       message: 'AI 로드맵 생성 완료',
     });
   } catch (error) {
-    console.error('Generate Roadmap error:', error);
+    console.error('❌ Generate Roadmap error:', error);
+
+    // Detailed error logging
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
+    }
+
+    let errorMessage = '로드맵 생성 중 오류가 발생했습니다.';
+    if (error instanceof Error) {
+      if (error.message.includes('API key')) {
+        errorMessage = 'Gemini API 인증에 실패했습니다.';
+      } else if (error.message.includes('timeout') || error.message.includes('ETIMEDOUT')) {
+        errorMessage = 'Gemini API 요청 시간이 초과되었습니다.';
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        errorMessage = 'Gemini API 네트워크 연결에 실패했습니다.';
+      } else {
+        errorMessage = error.message;
+      }
+    }
+
     return NextResponse.json<GenerateRoadmapResponse>(
       {
         success: false,
-        error: error instanceof Error ? error.message : '로드맵 생성 중 오류가 발생했습니다.',
+        error: errorMessage,
       },
       { status: 500 }
     );

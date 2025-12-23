@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PhaseDetailModalProps } from '@/types/roadmap.types';
+import { Icon } from '@/components/ui/Icon';
 
 export function PhaseDetailModal({
   phase,
@@ -29,9 +30,19 @@ export function PhaseDetailModal({
   return (
     <AnimatePresence>
       {isOpen && phase && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
+          {/* 배경 오버레이 */}
           <motion.div
-            className="relative bg-white rounded-3xl max-w-md w-full max-h-[80vh] overflow-y-auto pointer-events-auto"
+            className="absolute inset-0 bg-white/80 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+          />
+
+          <motion.div
+            className="relative bg-white rounded-3xl max-w-md w-full max-h-[80vh] overflow-y-auto z-10"
             style={{
               boxShadow: '0 25px 80px rgba(0, 0, 0, 0.25), 0 10px 40px rgba(0, 0, 0, 0.15)',
             }}
@@ -39,6 +50,7 @@ export function PhaseDetailModal({
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
             transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* 헤더 */}
             <div
@@ -111,12 +123,16 @@ export function PhaseDetailModal({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    {/* 번호 뱃지 */}
+                    {/* 아이콘 뱃지 */}
                     <div
-                      className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                      className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
                       style={{ backgroundColor: phase.color }}
                     >
-                      {i + 1}
+                      {activity.iconName ? (
+                        <Icon name={activity.iconName} size={14} color="white" />
+                      ) : (
+                        <span className="text-xs font-bold text-white">{i + 1}</span>
+                      )}
                     </div>
 
                     {/* 활동 설명 */}

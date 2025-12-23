@@ -4,61 +4,48 @@ import { useState } from 'react';
 import { Textarea } from './ui/Input';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
-import { Tag } from './ui/Badge';
 import { SejongColors } from '@/styles/colors';
-import type { CareerGoal } from '@/lib/types';
 
 interface CareerInputProps {
-  onSubmit: (careerGoal: CareerGoal) => void;
+  onSubmit: (careerGoal: string) => void;
   loading?: boolean;
 }
 
-const SUGGESTED_CAREERS = [
-  '백엔드 개발자',
-  '프론트엔드 개발자',
-  '풀스택 개발자',
-  '데이터 사이언티스트',
-  'AI/ML 엔지니어',
-  '게임 개발자',
-  '모바일 앱 개발자',
-  'DevOps 엔지니어',
-];
-
-const SUGGESTED_INTERESTS = [
-  'AI/ML',
-  '백엔드 개발',
-  '프론트엔드 개발',
-  '데이터 분석',
-  '클라우드',
-  '보안',
-  '게임 개발',
-  '모바일 앱',
-  '웹 개발',
-  'DevOps',
+const EXAMPLE_PROMPTS = [
+  {
+    id: 'backend',
+    label: '백엔드 개발자',
+    text: '백엔드 개발자를 목표로 하고 있습니다. Spring Boot, 데이터베이스, 클라우드에 관심이 있으며, 대기업 취업을 희망합니다.',
+  },
+  {
+    id: 'frontend',
+    label: '프론트엔드 개발자',
+    text: '프론트엔드 개발자가 되고 싶습니다. React, Next.js, TypeScript를 학습하고 싶으며, 사용자 경험 디자인에도 관심이 있습니다.',
+  },
+  {
+    id: 'ai',
+    label: 'AI 엔지니어',
+    text: 'AI/ML 엔지니어를 목표로 합니다. Python, TensorFlow, PyTorch를 배우고 싶고, 대학원 진학도 고려하고 있습니다.',
+  },
+  {
+    id: 'fullstack',
+    label: '풀스택 개발자',
+    text: '풀스택 개발자로 성장하고 싶습니다. 프론트엔드와 백엔드 모두 학습하여 전체 서비스를 개발하고 싶으며, 스타트업 창업에 관심이 있습니다.',
+  },
 ];
 
 export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
-  const [careerPath, setCareerPath] = useState('');
-  const [interests, setInterests] = useState<string[]>([]);
-  const [additionalInfo, setAdditionalInfo] = useState('');
-  const [errors, setErrors] = useState<{ careerPath?: string }>({});
+  const [careerGoalPrompt, setCareerGoalPrompt] = useState('');
+  const [errors, setErrors] = useState<{ careerGoal?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddInterest = (interest: string) => {
-    if (!interests.includes(interest)) {
-      setInterests([...interests, interest]);
-    }
-  };
-
-  const handleRemoveInterest = (interest: string) => {
-    setInterests(interests.filter((i) => i !== interest));
-  };
-
   const validate = (): boolean => {
-    const newErrors: { careerPath?: string } = {};
+    const newErrors: { careerGoal?: string } = {};
 
-    if (!careerPath.trim()) {
-      newErrors.careerPath = '희망 진로를 입력해주세요.';
+    if (!careerGoalPrompt.trim()) {
+      newErrors.careerGoal = '진로 목표를 입력해주세요.';
+    } else if (careerGoalPrompt.trim().length < 10) {
+      newErrors.careerGoal = '최소 10자 이상 입력해주세요.';
     }
 
     setErrors(newErrors);
@@ -70,23 +57,25 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
 
     if (!validate()) return;
 
-    const careerGoal: CareerGoal = {
-      careerPath: careerPath.trim(),
-      interests: interests.length > 0 ? interests : undefined,
-      additionalInfo: additionalInfo.trim() || undefined,
-    };
+    const trimmedGoal = careerGoalPrompt.trim();
 
-    // Activate local loading state
+    console.log('🎯 Career goal submitted:', {
+      length: trimmedGoal.length,
+      preview: trimmedGoal.substring(0, 50) + (trimmedGoal.length > 50 ? '...' : ''),
+    });
+
     setIsSubmitting(true);
 
-    // 5-second delay
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
     // Submit to parent
-    onSubmit(careerGoal);
+    onSubmit(trimmedGoal);
 
-    // Reset loading state after submission
-    setIsSubmitting(false);
+    // Note: loading state will be managed by parent component
+    // Parent will reset it when API call completes or fails
+  };
+
+  const handleExampleClick = (exampleText: string) => {
+    setCareerGoalPrompt(exampleText);
+    setErrors({});
   };
 
   return (
@@ -95,123 +84,68 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-3" style={{ color: SejongColors.primary }}>
-            희망 진로 입력
+            희망 진로 및 목표 입력
           </h2>
           <p className="text-gray-700">
-            목표하는 진로를 입력하시면 AI가 맞춤형 로드맵을 생성합니다
+            AI가 맞춤형 로드맵을 생성할 수 있도록 구체적으로 작성해주세요
           </p>
         </div>
 
-        {/* Career Path Input */}
+        {/* Main Text Area */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            희망 진로 <span className="text-red-500">*</span>
+            진로 목표 및 관심사 <span className="text-red-500">*</span>
           </label>
 
-          {/* Text Input */}
-          <input
-            type="text"
-            value={careerPath}
+          <Textarea
+            value={careerGoalPrompt}
             onChange={(e) => {
-              setCareerPath(e.target.value);
+              setCareerGoalPrompt(e.target.value);
               setErrors({});
             }}
-            placeholder="예: 백엔드 개발자, AI/ML 엔지니어 등"
-            className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all text-gray-900 placeholder:text-gray-400"
-            style={{
-              borderColor: errors.careerPath
-                ? '#ef4444'
-                : careerPath
-                  ? SejongColors.primary
-                  : SejongColors.border.medium,
-              boxShadow: careerPath ? `0 0 0 3px rgba(227, 6, 19, 0.1)` : 'none',
-            }}
+            placeholder="예: 백엔드 개발자를 목표로 하고 있습니다. Spring Boot, 데이터베이스, 클라우드에 관심이 있으며, 대기업 취업을 희망합니다."
+            rows={6}
+            fullWidth
+            helperText="희망 진로, 관심 분야, 추가 정보를 자유롭게 작성해주세요"
           />
 
-          {errors.careerPath && (
-            <p className="mt-2 text-sm text-red-600">{errors.careerPath}</p>
+          {errors.careerGoal && (
+            <p className="mt-2 text-sm text-red-600">{errors.careerGoal}</p>
           )}
-
-          {/* Suggested Careers */}
-          <div className="mt-4">
-            <p className="text-sm text-gray-600 mb-2">추천 진로 (클릭하여 입력)</p>
-            <div className="flex flex-wrap gap-2">
-              {SUGGESTED_CAREERS.map((career) => (
-                <button
-                  key={career}
-                  type="button"
-                  onClick={() => {
-                    setCareerPath(career);
-                    setErrors({});
-                  }}
-                  className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-primary-500 hover:text-primary-700 hover:bg-primary-50 transition-colors cursor-pointer"
-                  style={{
-                    borderColor: careerPath === career ? SejongColors.primary : SejongColors.border.medium,
-                    backgroundColor: careerPath === career ? 'rgba(227, 6, 19, 0.05)' : 'transparent',
-                    color: careerPath === career ? SejongColors.primary : undefined,
-                  }}
-                >
-                  {career}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Interests */}
+        {/* 작성 가이드 */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-blue-900 mb-2">
+            💡 작성 가이드
+          </h3>
+          <ul className="text-sm text-blue-800 space-y-1">
+            <li>• 희망하는 진로 (예: 백엔드 개발자, AI 엔지니어)</li>
+            <li>• 관심 있는 기술 분야 (예: Spring Boot, React, AWS)</li>
+            <li>• 목표 및 계획 (예: 대기업 취업, 스타트업 창업)</li>
+          </ul>
+        </div>
+
+        {/* 예시 프롬프트 버튼 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            관심 분야 (선택)
-          </label>
-
-          {/* Selected Interests */}
-          {interests.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {interests.map((interest) => (
-                <Tag
-                  key={interest}
-                  variant="primary"
-                  onRemove={() => handleRemoveInterest(interest)}
-                >
-                  {interest}
-                </Tag>
-              ))}
-            </div>
-          )}
-
-          {/* Suggested Interests */}
+          <p className="text-sm text-gray-600 mb-2">📝 작성 예시 (클릭하여 적용)</p>
           <div className="flex flex-wrap gap-2">
-            {SUGGESTED_INTERESTS.filter((s) => !interests.includes(s)).map((suggestion) => (
+            {EXAMPLE_PROMPTS.map((example) => (
               <button
-                key={suggestion}
+                key={example.id}
                 type="button"
-                onClick={() => handleAddInterest(suggestion)}
+                onClick={() => handleExampleClick(example.text)}
                 className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-primary-500 hover:text-primary-700 hover:bg-primary-50 transition-colors cursor-pointer"
                 style={{
-                  borderColor: SejongColors.border.medium,
+                  borderColor: careerGoalPrompt === example.text ? SejongColors.primary : SejongColors.border.medium,
+                  backgroundColor: careerGoalPrompt === example.text ? 'rgba(227, 6, 19, 0.05)' : 'transparent',
+                  color: careerGoalPrompt === example.text ? SejongColors.primary : undefined,
                 }}
               >
-                + {suggestion}
+                {example.label}
               </button>
             ))}
           </div>
-
-          <p className="text-xs text-gray-600 mt-2">
-            관심 있는 분야를 선택하면 더 정확한 로드맵을 받을 수 있습니다
-          </p>
-        </div>
-
-        {/* Additional Info */}
-        <div>
-          <Textarea
-            label="추가 정보 (선택)"
-            value={additionalInfo}
-            onChange={(e) => setAdditionalInfo(e.target.value)}
-            placeholder="예: 대학원 진학 계획, 특정 기업 목표, 개발하고 싶은 서비스 등"
-            rows={4}
-            helperText="구체적인 목표나 계획이 있다면 작성해주세요"
-            fullWidth
-          />
         </div>
 
         {/* Submit Button */}
@@ -229,7 +163,7 @@ export function CareerInput({ onSubmit, loading = false }: CareerInputProps) {
 
         {/* Info Note */}
         <div className="text-center text-sm text-gray-500 pt-4 border-t border-gray-200">
-          <p>AI 로드맵 생성에는 약 10-20초가 소요됩니다</p>
+          <p>AI 로드맵 생성에는 약 60초가 소요됩니다</p>
         </div>
       </form>
     </Card>
