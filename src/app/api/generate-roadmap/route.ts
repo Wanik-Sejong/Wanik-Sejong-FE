@@ -179,7 +179,7 @@ ${courseList}
   },
   "learningPath": [
     {
-      "period": "2025년 여름방학",
+      "period": "2025년 겨울방학",
       "goal": "이 기간의 학습 목표",
       "courses": [
         {

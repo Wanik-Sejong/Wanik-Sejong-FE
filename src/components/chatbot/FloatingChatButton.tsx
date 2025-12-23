@@ -26,7 +26,7 @@ export default function FloatingChatButton({ onClick }: FloatingChatButtonProps)
       style={{
         backgroundColor: isHovered ? SejongColors.primary600 : SejongColors.primary,
       }}
-      aria-label="컴공 시간표 챗봇 열기"
+      aria-label="세박사 열기"
     >
       {/* Message bubble icon */}
       <svg
@@ -51,7 +51,7 @@ export default function FloatingChatButton({ onClick }: FloatingChatButtonProps)
                      bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap
                      shadow-lg"
         >
-          시간표 챗봇
+          세박사 🎓
           <div
             className="absolute top-full right-6 w-0 h-0
                        border-l-4 border-r-4 border-t-4 border-transparent

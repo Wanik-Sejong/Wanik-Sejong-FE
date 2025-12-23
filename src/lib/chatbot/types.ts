@@ -41,6 +41,8 @@ export interface SearchIndices {
   dayIndex: Map<string, CourseData[]>;
   /** 이수구분 인덱스: "전필" → [강의1, 강의2, ...] */
   typeIndex: Map<string, CourseData[]>;
+  /** 학수번호 인덱스: "009912" → [강의1, 강의2, ...] */
+  courseCodeIndex: Map<string, CourseData[]>;
 }
 
 /**

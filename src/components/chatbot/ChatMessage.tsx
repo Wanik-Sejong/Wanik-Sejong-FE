@@ -21,7 +21,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     <div className={`flex ${isAssistant ? 'justify-start' : 'justify-end'}`}>
       <div
         className={`max-w-[85%] rounded-lg ${
-          isAssistant ? 'bg-gray-100 text-gray-900' : 'text-white'
+          isAssistant ? 'bg-gray-100' : ''
         }`}
         style={{
           backgroundColor: isAssistant ? undefined : SejongColors.primary,
@@ -29,7 +29,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
         }}
       >
         {isAssistant ? (
-          <div className="prose prose-sm max-w-none prose-headings:mt-3 prose-headings:mb-2 prose-p:my-1 prose-ul:my-1 prose-ol:my-1">
+          <div className="prose prose-sm max-w-none prose-headings:mt-3 prose-headings:mb-2 prose-p:my-1 prose-ul:my-1 prose-ol:my-1 text-gray-900">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -42,12 +42,12 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               ),
               th: ({ node, ...props }) => (
                 <th
-                  className="border border-gray-300 px-3 py-2 bg-gray-50 font-semibold text-left"
+                  className="border border-gray-300 px-3 py-2 bg-gray-50 font-semibold text-left text-gray-900"
                   {...props}
                 />
               ),
               td: ({ node, ...props }) => (
-                <td className="border border-gray-300 px-3 py-2" {...props} />
+                <td className="border border-gray-300 px-3 py-2 text-gray-900" {...props} />
               ),
               // 헤딩 스타일링
               h2: ({ node, ...props }) => (
@@ -58,19 +58,33 @@ export default function ChatMessage({ message }: ChatMessageProps) {
                 />
               ),
               h3: ({ node, ...props }) => (
-                <h3 className="text-base font-semibold mt-2 mb-1" {...props} />
+                <h3 className="text-base font-semibold mt-2 mb-1 text-gray-900" {...props} />
               ),
               // 강조 스타일링
               strong: ({ node, ...props }) => (
-                <strong className="font-semibold" {...props} />
+                <strong className="font-semibold text-gray-900" {...props} />
               ),
               // 인용구 스타일링
               blockquote: ({ node, ...props }) => (
                 <blockquote
-                  className="border-l-4 pl-3 my-2 text-gray-600 italic"
+                  className="border-l-4 pl-3 my-2 text-gray-700 italic"
                   style={{ borderColor: SejongColors.primary }}
                   {...props}
                 />
+              ),
+              // 리스트 스타일링
+              ul: ({ node, ...props }) => (
+                <ul className="text-gray-900" {...props} />
+              ),
+              ol: ({ node, ...props }) => (
+                <ol className="text-gray-900" {...props} />
+              ),
+              li: ({ node, ...props }) => (
+                <li className="text-gray-900" {...props} />
+              ),
+              // 일반 텍스트
+              p: ({ node, ...props }) => (
+                <p className="text-gray-900" {...props} />
               ),
             }}
             >
@@ -78,7 +92,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
             </ReactMarkdown>
           </div>
         ) : (
-          <p className="text-sm">{message.content}</p>
+          <p className="text-sm text-white font-medium">{message.content}</p>
         )}
 
         {/* 타임스탬프 */}

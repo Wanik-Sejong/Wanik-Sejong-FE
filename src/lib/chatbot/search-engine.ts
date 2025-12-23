@@ -42,16 +42,17 @@ export class LocalSearchEngine {
     console.log('🎯 Intent:', intent);
 
     // 3. 병렬 검색 실행
-    const [courseResults, professorResults, dayResults, typeResults] = await Promise.all([
+    const [courseResults, professorResults, dayResults, typeResults, courseCodeResults] = await Promise.all([
       Promise.resolve(this.searchByCourse(keywords)),
       Promise.resolve(this.searchByProfessor(keywords)),
       Promise.resolve(this.searchByDay(keywords, query)),
       Promise.resolve(this.searchByType(keywords)),
+      Promise.resolve(this.searchByCourseCode(keywords)),
     ]);
 
     // 4. 결과 병합 및 랭킹
     const merged = this.mergeAndRank(
-      [courseResults, professorResults, dayResults, typeResults],
+      [courseResults, professorResults, dayResults, typeResults, courseCodeResults],
       intent
     );
 
@@ -64,21 +65,23 @@ export class LocalSearchEngine {
   }
 
   /**
-   * 키워드 추출
+   * 키워드 추출 (indexer.ts와 동일한 로직 사용)
    */
   private extractKeywords(query: string): string[] {
     const normalized = query.toLowerCase();
     const keywords: string[] = [];
 
-    // 영문자 추출
+    // 영문자 및 숫자 추출
     const englishMatch = normalized.match(/[a-z0-9]+/gi);
     if (englishMatch) {
       keywords.push(...englishMatch);
     }
 
-    // 한글 단어 추출
-    const koreanWords = normalized.match(/[가-힣]+/g) || [];
-    keywords.push(...koreanWords.filter(w => w.length >= 2));
+    // 한글 단어 추출 (조사 및 접속사 제거)
+    const koreanWords = normalized
+      .split(/및|와|과|의|을|를|이|가|에|으로|부터|까지|[^가-힣]+/)
+      .filter(w => w.length >= 2);
+    keywords.push(...koreanWords);
 
     // 불용어 제거
     const stopWords = ['있어', '알려', '알려줘', '뭐', '어디', '언제', '누구', '교수', '선생', '과목'];
@@ -197,6 +200,26 @@ export class LocalSearchEngine {
       const type = typeMap[keyword];
       if (type) {
         const matches = this.indices.typeIndex.get(type) || [];
+        matches.forEach(course => results.add(course));
+      }
+    }
+
+    return Array.from(results);
+  }
+
+  /**
+   * 학수번호로 검색
+   * "009912", "0099" 등 숫자 키워드를 학수번호로 처리
+   */
+  private searchByCourseCode(keywords: string[]): CourseData[] {
+    if (!this.indices) return [];
+
+    const results = new Set<CourseData>();
+
+    for (const keyword of keywords) {
+      // 숫자로만 구성된 키워드만 학수번호로 처리
+      if (/^\d+$/.test(keyword) && keyword.length >= 3) {
+        const matches = this.indices.courseCodeIndex.get(keyword) || [];
         matches.forEach(course => results.add(course));
       }
     }

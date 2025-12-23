@@ -28,13 +28,35 @@ export async function parseExcel(file: File): Promise<ParseExcelResponse> {
     const formData = new FormData();
     formData.append('file', file);
 
+    // 🔍 디버깅: FormData 내용 확인
+    console.log('📤 전송할 FormData:', {
+      파일명: file.name,
+      파일크기: file.size,
+      파일타입: file.type,
+      FormDataEntries: Array.from(formData.entries()).map(([key, value]) => ({
+        key,
+        value: value instanceof File ? `File(${value.name}, ${value.type})` : value,
+      })),
+    });
+
     const apiUrl = `${config.api.baseUrl}/api/parse-excel`;
+    console.log('🌐 API 요청:', { method: 'POST', url: apiUrl });
+
     const response = await fetch(apiUrl, {
       method: 'POST',
       body: formData,
     });
 
+    console.log('📥 API 응답:', {
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries()),
+    });
+
     if (!response.ok) {
+      // 에러 응답 본문 확인
+      const errorText = await response.text();
+      console.error('❌ 에러 응답 본문:', errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 

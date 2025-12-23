@@ -127,7 +127,7 @@ interface TimelineProps {
 
 export function Timeline({ items }: TimelineProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {items.map((item, index) => {
         const statusColors = {
           completed: SejongColors.primary,
@@ -141,50 +141,72 @@ export function Timeline({ items }: TimelineProps) {
           pending: SejongColors.border.light
         };
 
+        const gradientColors = {
+          completed: 'from-red-50 to-white',
+          active: 'from-amber-50 to-white',
+          pending: 'from-gray-50 to-white'
+        };
+
         const status = item.status || 'pending';
 
         return (
-          <div key={index} className="relative flex gap-6">
-            {/* Connector Line */}
+          <div key={index} className="relative flex gap-8">
+            {/* Connector Line with Gradient */}
             {index < items.length - 1 && (
               <div
-                className="absolute left-10 top-24 w-0.5 h-full"
-                style={{ backgroundColor: SejongColors.border.medium }}
+                className="absolute left-12 top-28 w-1 h-full rounded-full opacity-30"
+                style={{
+                  background: `linear-gradient(to bottom, ${statusColors[status]}, ${SejongColors.border.light})`
+                }}
               />
             )}
 
-            {/* Icon Circle */}
+            {/* Icon Circle with Enhanced Styling */}
             <div
-              className="shrink-0 w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-md relative z-10"
+              className="shrink-0 w-24 h-24 rounded-full flex items-center justify-center text-4xl shadow-xl relative z-10 transition-transform duration-300 hover:scale-110"
               style={{
                 backgroundColor: bgColors[status],
-                border: `3px solid ${statusColors[status]}`
+                border: `4px solid ${statusColors[status]}`,
+                boxShadow: `0 4px 20px rgba(0, 0, 0, 0.1), 0 0 0 8px ${bgColors[status]}`
               }}
             >
               {item.icon}
             </div>
 
-            {/* Content Card */}
-            <div className="flex-1 bg-white rounded-xl p-6 shadow-md">
-              <div className="flex justify-between items-start mb-3">
-                <div>
+            {/* Content Card with Enhanced Styling */}
+            <div
+              className={`flex-1 bg-linear-to-br ${gradientColors[status]} rounded-2xl p-8 shadow-xl border-l-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1`}
+              style={{
+                borderLeftColor: statusColors[status]
+              }}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
                   <h3
-                    className="text-xl font-bold"
+                    className="text-2xl font-bold mb-2"
                     style={{ color: statusColors[status] }}
                   >
                     {item.title}
                   </h3>
                   {item.subtitle && (
-                    <p className="text-gray-600 text-sm mt-1">{item.subtitle}</p>
+                    <p className="text-gray-700 text-base font-medium">{item.subtitle}</p>
                   )}
                 </div>
 
                 {item.date && (
-                  <span className="text-sm text-gray-500">{item.date}</span>
+                  <span
+                    className="text-sm font-semibold px-3 py-1 rounded-full shrink-0 ml-4"
+                    style={{
+                      backgroundColor: bgColors[status],
+                      color: statusColors[status]
+                    }}
+                  >
+                    {item.date}
+                  </span>
                 )}
               </div>
 
-              <div className="text-gray-700 leading-relaxed">
+              <div className="text-gray-800 leading-relaxed text-base">
                 {item.description}
               </div>
             </div>

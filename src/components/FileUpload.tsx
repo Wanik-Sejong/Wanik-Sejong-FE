@@ -22,6 +22,14 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       const file = acceptedFiles[0];
       if (!file) return;
 
+      // 🔍 디버깅: 파일 정보 출력
+      console.log('📁 업로드된 파일 정보:', {
+        이름: file.name,
+        크기: `${(file.size / 1024).toFixed(2)} KB`,
+        타입: file.type,
+        최종수정: new Date(file.lastModified).toLocaleString(),
+      });
+
       setFileName(file.name);
       setError(null);
       setUploading(true);

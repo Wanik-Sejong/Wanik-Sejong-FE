@@ -78,6 +78,7 @@ ${this.generateAdditionalInfo(course)}
 
       response += `
 ### ${i + 1}. ${course.교과목명}
+- **학수번호**: ${course.학수번호}-${course.분반}
 - **교수님**: ${course.교수명}
 - **이수구분**: ${course.이수구분}
 - **시간**: ${scheduleInfo}

@@ -91,6 +91,34 @@ function createTypeIndex(courses: CourseData[]): Map<string, CourseData[]> {
 }
 
 /**
+ * 학수번호 인덱스 생성
+ * "009912" → [강의1, 강의2, ...]
+ * 부분 매칭 지원: "0099" → "009912", "009939" 등
+ */
+function createCourseCodeIndex(courses: CourseData[]): Map<string, CourseData[]> {
+  const index = new Map<string, CourseData[]>();
+
+  for (const course of courses) {
+    const courseCode = course.학수번호;
+    if (!courseCode) continue;
+
+    // 전체 학수번호로 인덱싱
+    const existing = index.get(courseCode) || [];
+    index.set(courseCode, [...existing, course]);
+
+    // 부분 매칭을 위한 prefix 인덱싱 (3글자 이상만)
+    // "009912" → "009", "0099", "00991", "009912"
+    for (let i = 3; i <= courseCode.length; i++) {
+      const prefix = courseCode.substring(0, i);
+      const existingPrefix = index.get(prefix) || [];
+      index.set(prefix, [...existingPrefix, course]);
+    }
+  }
+
+  return index;
+}
+
+/**
  * 키워드 추출 (간단한 토크나이저)
  */
 function extractKeywords(text: string): string[] {
@@ -103,9 +131,17 @@ function extractKeywords(text: string): string[] {
     keywords.push(...englishMatch.map(k => k.toLowerCase()));
   }
 
-  // 한글 단어 추출 (조사 제거 간단 버전)
-  const koreanWords = text.split(/[^가-힣]+/).filter(w => w.length >= 2);
+  // 한글 단어 추출 (조사 및 접속사 제거)
+  // "자료구조및실습" → ["자료구조", "실습"]
+  const koreanWords = text
+    .split(/및|와|과|의|을|를|이|가|에|으로|부터|까지|[^가-힣]+/)
+    .filter(w => w.length >= 2);
   keywords.push(...koreanWords);
+
+  // 디버그: 자료구조 포함 시 로그
+  if (text.includes('자료구조')) {
+    console.log('🔍 Keyword extraction:', text, '→', keywords);
+  }
 
   return keywords;
 }
@@ -114,21 +150,27 @@ function extractKeywords(text: string): string[] {
  * 모든 인덱스를 병렬로 생성
  */
 export async function createIndices(courses: CourseData[]): Promise<SearchIndices> {
-  // 병렬 처리로 4개 인덱스 동시 생성
-  const [courseNameIndex, professorIndex, dayIndex, typeIndex] = await Promise.all([
-    Promise.resolve(createCourseNameIndex(courses)),
-    Promise.resolve(createProfessorIndex(courses)),
-    Promise.resolve(createDayIndex(courses)),
-    Promise.resolve(createTypeIndex(courses)),
-  ]);
+  // 병렬 처리로 5개 인덱스 동시 생성
+  const [courseNameIndex, professorIndex, dayIndex, typeIndex, courseCodeIndex] =
+    await Promise.all([
+      Promise.resolve(createCourseNameIndex(courses)),
+      Promise.resolve(createProfessorIndex(courses)),
+      Promise.resolve(createDayIndex(courses)),
+      Promise.resolve(createTypeIndex(courses)),
+      Promise.resolve(createCourseCodeIndex(courses)),
+    ]);
 
   return {
     courseNameIndex,
     professorIndex,
     dayIndex,
     typeIndex,
+    courseCodeIndex,
   };
 }
+
+// 인덱스 버전 관리 (구조 변경 시 증가)
+const INDEX_VERSION = 5; // 조사/접속사 분리 로직 수정 (및, 와, 과 등)
 
 /**
  * 인덱스를 세션 스토리지에 저장 (직렬화)
@@ -136,10 +178,12 @@ export async function createIndices(courses: CourseData[]): Promise<SearchIndice
 export function saveIndicesToSession(indices: SearchIndices): void {
   try {
     const serialized = {
+      version: INDEX_VERSION,
       courseNameIndex: Array.from(indices.courseNameIndex.entries()),
       professorIndex: Array.from(indices.professorIndex.entries()),
       dayIndex: Array.from(indices.dayIndex.entries()),
       typeIndex: Array.from(indices.typeIndex.entries()),
+      courseCodeIndex: Array.from(indices.courseCodeIndex.entries()),
     };
     sessionStorage.setItem('chatbot_indices', JSON.stringify(serialized));
   } catch (error) {
@@ -156,11 +200,20 @@ export function loadIndicesFromSession(): SearchIndices | null {
     if (!stored) return null;
 
     const parsed = JSON.parse(stored);
+
+    // 버전 체크: 버전이 다르면 캐시 무효화
+    if (parsed.version !== INDEX_VERSION) {
+      console.log(`🔄 Index version mismatch (stored: ${parsed.version}, current: ${INDEX_VERSION}). Rebuilding indices...`);
+      sessionStorage.removeItem('chatbot_indices');
+      return null;
+    }
+
     return {
       courseNameIndex: new Map(parsed.courseNameIndex),
       professorIndex: new Map(parsed.professorIndex),
       dayIndex: new Map(parsed.dayIndex),
       typeIndex: new Map(parsed.typeIndex),
+      courseCodeIndex: new Map(parsed.courseCodeIndex || []),
     };
   } catch (error) {
     console.warn('Failed to load indices from session storage:', error);
