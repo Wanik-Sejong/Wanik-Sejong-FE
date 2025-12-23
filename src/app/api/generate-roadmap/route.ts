@@ -94,12 +94,10 @@ function getMockRoadmap(careerPath: string): Roadmap {
  * Generate AI-powered learning roadmap using Google Gemini 2.0
  */
 export async function POST(request: NextRequest) {
-
   try {
     // Parse request body
     const body: RoadmapRequest = await request.json();
     const { transcript, careerGoal } = body;
-
 
     // Validate inputs
     if (!transcript || !transcript.courses || transcript.courses.length === 0) {
@@ -151,7 +149,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-
     // Initialize Gemini client
     const genAI = new GoogleGenerativeAI(config.gemini.apiKey);
     const model = genAI.getGenerativeModel({
@@ -172,7 +169,6 @@ export async function POST(request: NextRequest) {
     const result = await model.generateContent(fullPrompt);
     const response = result.response;
     const responseText = response.text();
-
 
     if (!responseText) {
       throw new Error('Gemini 응답이 비어있습니다.');
@@ -195,7 +191,6 @@ export async function POST(request: NextRequest) {
       advice: roadmapData.advice || '',
       generatedAt: new Date().toISOString(),
     };
-
 
     return NextResponse.json<GenerateRoadmapResponse>({
       success: true,

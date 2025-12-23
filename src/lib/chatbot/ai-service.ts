@@ -30,7 +30,6 @@ export class AIChatService {
     courseContext: CourseData[] = []
   ): Promise<AIChatResponse> {
     try {
-
       const response = await fetch('/api/chatbot', {
         method: 'POST',
         headers: {
