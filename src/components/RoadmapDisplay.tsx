@@ -6,6 +6,7 @@ import { Timeline } from './ui/ProcessFlow';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { Divider } from './ui/Divider';
+import { DonutChart, BarChart, ProgressBar } from './ui/Chart';
 import { SejongColors } from '@/styles/colors';
 import type { Roadmap } from '@/lib/types';
 
@@ -34,6 +35,45 @@ const PRIORITY_LABELS = {
 
 export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
   const { careerSummary, currentSkills, learningPath, advice, generatedAt } = roadmap;
+
+  // Calculate statistics for visualization
+  const stats = useMemo(() => {
+    const totalCourses = learningPath.reduce((sum, phase) => sum + phase.courses.length, 0);
+    const totalPhases = learningPath.length;
+
+    // Count courses by priority
+    const priorityCount = { high: 0, medium: 0, low: 0 };
+    learningPath.forEach(phase => {
+      phase.courses.forEach(course => {
+        if (course.priority) {
+          priorityCount[course.priority]++;
+        }
+      });
+    });
+
+    // Calculate tech stack difficulty average
+    let totalTechStacks = 0;
+    let totalDifficulty = 0;
+    learningPath.forEach(phase => {
+      if (phase.techStacks) {
+        phase.techStacks.forEach(tech => {
+          totalTechStacks++;
+          if (tech.difficulty) {
+            totalDifficulty += tech.difficulty;
+          }
+        });
+      }
+    });
+    const avgDifficulty = totalTechStacks > 0 ? totalDifficulty / totalTechStacks : 0;
+
+    return {
+      totalCourses,
+      totalPhases,
+      priorityCount,
+      totalTechStacks,
+      avgDifficulty,
+    };
+  }, [learningPath]);
 
   // Convert learning path to timeline format - memoized to prevent recalculation on every render
   const timelineItems = useMemo(
@@ -68,18 +108,39 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
                 <div className="grid grid-cols-1 gap-3">
                   {phase.techStacks.map((tech, idx) => (
                     <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                      <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-gray-900">{tech.name}</span>
                         <Badge variant={PRIORITY_VARIANTS[tech.priority]}>
                           {PRIORITY_LABELS[tech.priority]}
                         </Badge>
                       </div>
-                      <p className="text-xs text-gray-600 mb-2">{tech.reason}</p>
+                      <p className="text-xs text-gray-600 mb-3">{tech.reason}</p>
+
+                      {/* Difficulty Visualization */}
+                      {tech.difficulty && (
+                        <div className="mb-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-gray-700">학습 난이도</span>
+                            <span className="text-xs text-gray-600">{'⭐'.repeat(tech.difficulty)}</span>
+                          </div>
+                          <ProgressBar
+                            value={tech.difficulty}
+                            max={5}
+                            color={
+                              tech.difficulty <= 2
+                                ? SejongColors.primary
+                                : tech.difficulty <= 3
+                                ? SejongColors.gold
+                                : '#f59e0b'
+                            }
+                            size="sm"
+                            showPercentage={false}
+                          />
+                        </div>
+                      )}
+
                       <div className="flex items-center gap-2 text-xs text-gray-500">
                         <span className="bg-gray-200 px-2 py-0.5 rounded">{tech.category}</span>
-                        {tech.difficulty && (
-                          <span>난이도: {'⭐'.repeat(tech.difficulty)}</span>
-                        )}
                       </div>
                       {tech.resources && tech.resources.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
@@ -150,6 +211,105 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
 
       <Divider variant="gradient" spacing="lg" />
 
+      {/* Overview Dashboard */}
+      <section>
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold mb-2" style={{ color: SejongColors.primary }}>
+            📊 로드맵 한눈에 보기
+          </h2>
+          <p className="text-gray-600 text-sm">전체 학습 경로의 주요 통계입니다</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Total Courses */}
+          <Card shadow="lg" padding="lg" className="text-center">
+            <div className="flex flex-col items-center">
+              <DonutChart
+                value={stats.totalCourses}
+                max={stats.totalCourses}
+                size={140}
+                strokeWidth={16}
+                showPercentage={false}
+              />
+              <h3 className="text-3xl font-bold mt-4" style={{ color: SejongColors.primary }}>
+                {stats.totalCourses}개
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">총 추천 과목</p>
+            </div>
+          </Card>
+
+          {/* Learning Phases */}
+          <Card shadow="lg" padding="lg" className="text-center">
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-6xl mb-4">🗺️</div>
+              <h3 className="text-3xl font-bold" style={{ color: SejongColors.primary }}>
+                {stats.totalPhases}단계
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">학습 경로</p>
+            </div>
+          </Card>
+
+          {/* Tech Stacks */}
+          <Card shadow="lg" padding="lg" className="text-center">
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-6xl mb-4">💻</div>
+              <h3 className="text-3xl font-bold" style={{ color: SejongColors.primary }}>
+                {stats.totalTechStacks}개
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">추천 기술스택</p>
+            </div>
+          </Card>
+
+          {/* Average Difficulty */}
+          <Card shadow="lg" padding="lg" className="text-center">
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="mb-4">
+                <ProgressBar
+                  value={stats.avgDifficulty}
+                  max={5}
+                  color={SejongColors.gold}
+                  size="lg"
+                  showPercentage={false}
+                />
+              </div>
+              <h3 className="text-3xl font-bold" style={{ color: SejongColors.gold }}>
+                {'⭐'.repeat(Math.round(stats.avgDifficulty))}
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">평균 난이도</p>
+            </div>
+          </Card>
+        </div>
+
+        {/* Priority Distribution */}
+        <Card shadow="lg" padding="lg">
+          <h3 className="text-lg font-bold mb-4" style={{ color: SejongColors.primary }}>
+            📌 우선순위별 과목 분포
+          </h3>
+          <BarChart
+            data={[
+              {
+                label: '높음 (필수)',
+                value: stats.priorityCount.high,
+                color: PRIORITY_COLORS.high
+              },
+              {
+                label: '중간 (권장)',
+                value: stats.priorityCount.medium,
+                color: PRIORITY_COLORS.medium
+              },
+              {
+                label: '낮음 (선택)',
+                value: stats.priorityCount.low,
+                color: PRIORITY_COLORS.low
+              },
+            ]}
+            showValues={true}
+          />
+        </Card>
+      </section>
+
+      <Divider variant="gradient" spacing="xl" />
+
       {/* Career Summary */}
       <section>
         <Card shadow="xl" padding="lg">
@@ -166,15 +326,29 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Strengths */}
         <Card shadow="lg" padding="lg" className="border-l-4" style={{ borderLeftColor: SejongColors.primary }}>
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: SejongColors.primary }}>
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-2" style={{ color: SejongColors.primary }}>
             <span>💪</span>
             현재 강점
           </h3>
+
+          {/* Visual Chart */}
+          <div className="mb-6 p-4 bg-linear-to-br from-green-50 to-white rounded-lg">
+            <BarChart
+              data={currentSkills.strengths.slice(0, 5).map((_strength, index) => ({
+                label: `강점 ${index + 1}`,
+                value: 100 - (index * 15), // Visual representation
+                color: SejongColors.primary
+              }))}
+              height={150}
+              showValues={false}
+            />
+          </div>
+
           <ul className="space-y-3">
             {currentSkills.strengths.map((strength, index) => (
               <li key={index} className="text-gray-700 flex items-start gap-2">
-                <span className="text-green-500 mt-1">✓</span>
-                <span>{strength}</span>
+                <span className="text-green-500 mt-1 text-lg">✓</span>
+                <span className="leading-relaxed">{strength}</span>
               </li>
             ))}
           </ul>
@@ -182,15 +356,29 @@ export function RoadmapDisplay({ roadmap, onReset }: RoadmapDisplayProps) {
 
         {/* Gaps */}
         <Card shadow="lg" padding="lg" className="border-l-4" style={{ borderLeftColor: SejongColors.gold }}>
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: SejongColors.gold }}>
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-2" style={{ color: SejongColors.gold }}>
             <span>🎯</span>
             보완 필요 영역
           </h3>
+
+          {/* Visual Chart */}
+          <div className="mb-6 p-4 bg-linear-to-br from-amber-50 to-white rounded-lg">
+            <BarChart
+              data={currentSkills.gaps.slice(0, 5).map((_gap, index) => ({
+                label: `보완 ${index + 1}`,
+                value: 100 - (index * 15), // Visual representation
+                color: SejongColors.gold
+              }))}
+              height={150}
+              showValues={false}
+            />
+          </div>
+
           <ul className="space-y-3">
             {currentSkills.gaps.map((gap, index) => (
               <li key={index} className="text-gray-700 flex items-start gap-2">
-                <span className="text-amber-500 mt-1">→</span>
-                <span>{gap}</span>
+                <span className="text-amber-500 mt-1 text-lg">→</span>
+                <span className="leading-relaxed">{gap}</span>
               </li>
             ))}
           </ul>
