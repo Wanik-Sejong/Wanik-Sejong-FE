@@ -236,7 +236,6 @@ npm start
 {
   "success": true,
   "data": {
-    "studentInfo": {...},
     "courses": [...],
     "totalCredits": 34
   }

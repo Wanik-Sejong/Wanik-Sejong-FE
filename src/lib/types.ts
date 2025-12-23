@@ -7,39 +7,42 @@
  * Course information from Excel transcript
  */
 export interface Course {
-  /** 과목명 (Course name) */
-  name: string;
+  /** 학수번호 (Course code) */
+  courseCode: string;
+  /** 교과목명 (Course name) */
+  courseName: string;
+  /** 이수구분 (Course type: 전공필수, 전공선택, 교양필수, 교양선택, 교직 등) */
+  courseType: string;
+  /** 교직영역 (Teaching area: 교직이론, 교직소양, 교육실습 등) */
+  teachingArea?: string | null;
+  /** 선택영역 (Selected area) */
+  selectedArea?: string | null;
   /** 학점 (Credits) */
   credits: number;
-  /** 학년 (Year taken) */
-  year?: number;
-  /** 학기 (Semester taken) */
-  semester?: string;
-  /** 성적 (Grade) */
-  grade?: string;
-  /** 전공 구분 (Major category: 전공필수, 전공선택, 교양 등) */
-  category?: string;
+  /** 평가방식 (Evaluation type: 절대평가, 상대평가 등) */
+  evaluationType: string;
+  /** 등급 (Grade: A+, A, B+ 등) */
+  grade: string;
+  /** 평점 (Grade point: 4.5, 4.0 등) */
+  gradePoint: number;
+  /** 개설학과코드 (Department code) */
+  departmentCode?: string | null;
 }
 
 /**
  * Parsed transcript data from Excel
  */
 export interface TranscriptData {
-  /** 학생 정보 (Student info) */
-  studentInfo?: {
-    name?: string;
-    studentId?: string;
-    major?: string;
-    year?: number;
-  };
   /** 이수 과목 리스트 (List of completed courses) */
   courses: Course[];
   /** 총 학점 (Total credits) */
   totalCredits: number;
-  /** 전공 학점 (Major credits) */
-  majorCredits?: number;
-  /** 교양 학점 (General education credits) */
-  generalCredits?: number;
+  /** 전공 총 학점 (Total major credits) */
+  totalMajorCredits?: number;
+  /** 교양 총 학점 (Total general education credits) */
+  totalGeneralCredits?: number;
+  /** 평균 평점 (Average GPA, max 4.5) */
+  averageGPA?: number;
 }
 
 /**

@@ -186,22 +186,6 @@ export default function HomePage() {
                         업로드된 성적표 정보
                       </h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        {transcriptData.studentInfo && (
-                          <>
-                            <div>
-                              <span className="text-gray-700">이름:</span>
-                              <span className="ml-2 font-medium text-gray-900">{transcriptData.studentInfo.name}</span>
-                            </div>
-                            <div>
-                              <span className="text-gray-700">학번:</span>
-                              <span className="ml-2 font-medium text-gray-900">{transcriptData.studentInfo.studentId}</span>
-                            </div>
-                            <div>
-                              <span className="text-gray-700">전공:</span>
-                              <span className="ml-2 font-medium text-gray-900">{transcriptData.studentInfo.major}</span>
-                            </div>
-                          </>
-                        )}
                         <div>
                           <span className="text-gray-700">이수 과목:</span>
                           <span className="ml-2 font-medium text-gray-900">{transcriptData.courses.length}개</span>
@@ -210,6 +194,18 @@ export default function HomePage() {
                           <span className="text-gray-700">총 학점:</span>
                           <span className="ml-2 font-medium text-gray-900">{transcriptData.totalCredits}학점</span>
                         </div>
+                        {transcriptData.totalMajorCredits !== undefined && (
+                          <div>
+                            <span className="text-gray-700">전공 학점:</span>
+                            <span className="ml-2 font-medium text-gray-900">{transcriptData.totalMajorCredits}학점</span>
+                          </div>
+                        )}
+                        {transcriptData.averageGPA !== undefined && (
+                          <div>
+                            <span className="text-gray-700">평균 평점:</span>
+                            <span className="ml-2 font-medium text-gray-900">{transcriptData.averageGPA.toFixed(2)}/4.5</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <Button variant="ghost" size="sm" onClick={handleReset}>

@@ -1,9 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Card, StatCard } from './ui/Card';
+import { Card } from './ui/Card';
 import { Timeline } from './ui/ProcessFlow';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
@@ -206,9 +204,7 @@ ${phase.effort ? `**예상 학습량**: ${phase.effort}` : ''}
             <h3 className="text-2xl font-bold mb-4" style={{ color: SejongColors.primary }}>
               추가 조언
             </h3>
-            <div className="prose prose-gray max-w-none prose-p:text-gray-800 prose-li:text-gray-800 prose-strong:text-gray-900">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{advice}</ReactMarkdown>
-            </div>
+            <p className="text-gray-700 leading-relaxed">{advice}</p>
           </div>
         </Card>
       )}

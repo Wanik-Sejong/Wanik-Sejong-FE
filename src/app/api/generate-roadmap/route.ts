@@ -118,7 +118,7 @@ function createRoadmapPrompt(
   careerGoal: RoadmapRequest['careerGoal']
 ): string {
   const courseList = transcript.courses
-    .map((c) => `- ${c.name} (${c.credits}학점, ${c.category || '기타'})`)
+    .map((c) => `- ${c.courseName} (${c.credits}학점, ${c.courseType})`)
     .join('\n');
 
   const interests = careerGoal.interests?.join(', ') || '없음';
@@ -127,12 +127,11 @@ function createRoadmapPrompt(
   return `
 # 학습 로드맵 생성 요청
 
-## 학생 정보
-- 이름: ${transcript.studentInfo?.name || '학생'}
-- 학번: ${transcript.studentInfo?.studentId || 'N/A'}
-- 전공: ${transcript.studentInfo?.major || 'N/A'}
-- 학년: ${transcript.studentInfo?.year || 'N/A'}
-- 총 이수학점: ${transcript.totalCredits}학점
+## 학생 성적 정보
+- 총 이수 학점: ${transcript.totalCredits}학점
+- 전공 학점: ${transcript.totalMajorCredits || 0}학점
+- 교양 학점: ${transcript.totalGeneralCredits || 0}학점
+- 평균 평점: ${transcript.averageGPA?.toFixed(2) || 'N/A'}/4.5
 
 ## 이수 과목 (${transcript.courses.length}개)
 ${courseList}

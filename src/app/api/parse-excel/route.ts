@@ -78,21 +78,14 @@ export async function POST(request: NextRequest) {
 
 /**
  * Parse raw Excel data into TranscriptData structure
- * Adapt this function to match your actual Excel format
+ * Adapted to match the new API specification
  */
 function parseTranscriptData(rawData: any[]): TranscriptData {
   const courses: Course[] = [];
   let totalCredits = 0;
-  let majorCredits = 0;
-  let generalCredits = 0;
-
-  // Student info (if available in first row or header)
-  const studentInfo = {
-    name: rawData[0]?.['이름'] || rawData[0]?.['학생명'] || '학생',
-    studentId: rawData[0]?.['학번'] || '',
-    major: rawData[0]?.['전공'] || rawData[0]?.['학과'] || '',
-    year: parseInt(rawData[0]?.['학년'] || '3'),
-  };
+  let totalMajorCredits = 0;
+  let totalGeneralCredits = 0;
+  let totalGradePoints = 0;
 
   // Parse each row as a course
   for (const row of rawData) {
@@ -101,35 +94,77 @@ function parseTranscriptData(rawData: any[]): TranscriptData {
 
     const courseName = row['과목명'] || row['교과목명'];
     const credits = parseFloat(row['학점'] || row['이수학점'] || '0');
-    const category = row['구분'] || row['이수구분'] || '기타';
+    const courseType = row['구분'] || row['이수구분'] || '기타';
+    const grade = row['성적'] || row['등급'] || '';
 
     if (!courseName) continue;
 
     const course: Course = {
-      name: courseName,
+      courseCode: row['학수번호'] || '',
+      courseName,
+      courseType,
+      teachingArea: row['교직영역'] || null,
+      selectedArea: row['선택영역'] || null,
       credits,
-      year: parseInt(row['학년'] || row['이수학년'] || '0'),
-      semester: row['학기'] || '',
-      grade: row['성적'] || row['평점'] || '',
-      category,
+      evaluationType: row['평가방식'] || '절대평가',
+      grade,
+      gradePoint: parseGradePoint(row['평점'] || grade),
+      departmentCode: row['개설학과코드'] || null,
     };
 
     courses.push(course);
     totalCredits += credits;
+    totalGradePoints += course.gradePoint * credits;
 
     // Categorize credits
-    if (category.includes('전공')) {
-      majorCredits += credits;
-    } else if (category.includes('교양')) {
-      generalCredits += credits;
+    if (courseType.includes('전공')) {
+      totalMajorCredits += credits;
+    } else if (courseType.includes('교양')) {
+      totalGeneralCredits += credits;
     }
   }
 
+  // Calculate average GPA
+  const averageGPA = totalCredits > 0
+    ? Math.round((totalGradePoints / totalCredits) * 100) / 100
+    : 0;
+
   return {
-    studentInfo,
     courses,
     totalCredits,
-    majorCredits,
-    generalCredits,
+    totalMajorCredits,
+    totalGeneralCredits,
+    averageGPA,
   };
+}
+
+/**
+ * Convert grade letter to grade point
+ * @param grade Grade letter (A+, A, B+, etc.) or numeric grade point
+ * @returns Grade point value (0.0 - 4.5)
+ */
+function parseGradePoint(grade: string | number): number {
+  // If already a number, return it
+  if (typeof grade === 'number') return grade;
+
+  // Convert string to number if possible
+  const numericGrade = parseFloat(grade);
+  if (!isNaN(numericGrade)) return numericGrade;
+
+  // Grade letter to grade point mapping (4.5 scale)
+  const gradeMap: Record<string, number> = {
+    'A+': 4.5,
+    'A': 4.0,
+    'B+': 3.5,
+    'B': 3.0,
+    'C+': 2.5,
+    'C': 2.0,
+    'D+': 1.5,
+    'D': 1.0,
+    'F': 0.0,
+    'P': 0.0, // Pass (no grade point)
+    'NP': 0.0, // No Pass
+  };
+
+  return gradeMap[grade.toUpperCase()] || 0.0;
 }

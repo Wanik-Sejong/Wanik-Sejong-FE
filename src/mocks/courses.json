@@ -1,109 +1,152 @@
 {
-  "studentInfo": {
-    "name": "김세종",
-    "studentId": "20210001",
-    "major": "컴퓨터공학과",
-    "year": 3
-  },
   "courses": [
     {
-      "name": "프로그래밍기초",
+      "courseCode": "CSE101",
+      "courseName": "프로그래밍기초",
+      "courseType": "전공필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 1,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "A+",
-      "category": "전공필수"
+      "gradePoint": 4.5,
+      "departmentCode": "CSE"
     },
     {
-      "name": "자료구조",
+      "courseCode": "CSE102",
+      "courseName": "자료구조",
+      "courseType": "전공필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 1,
-      "semester": "2학기",
+      "evaluationType": "절대평가",
       "grade": "A",
-      "category": "전공필수"
+      "gradePoint": 4.0,
+      "departmentCode": "CSE"
     },
     {
-      "name": "알고리즘",
+      "courseCode": "CSE201",
+      "courseName": "알고리즘",
+      "courseType": "전공필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 2,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "B+",
-      "category": "전공필수"
+      "gradePoint": 3.5,
+      "departmentCode": "CSE"
     },
     {
-      "name": "데이터베이스",
+      "courseCode": "CSE202",
+      "courseName": "데이터베이스",
+      "courseType": "전공필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 2,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "A",
-      "category": "전공필수"
+      "gradePoint": 4.0,
+      "departmentCode": "CSE"
     },
     {
-      "name": "운영체제",
+      "courseCode": "CSE203",
+      "courseName": "운영체제",
+      "courseType": "전공필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 2,
-      "semester": "2학기",
+      "evaluationType": "절대평가",
       "grade": "A",
-      "category": "전공필수"
+      "gradePoint": 4.0,
+      "departmentCode": "CSE"
     },
     {
-      "name": "컴퓨터네트워크",
+      "courseCode": "CSE204",
+      "courseName": "컴퓨터네트워크",
+      "courseType": "전공필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 2,
-      "semester": "2학기",
+      "evaluationType": "절대평가",
       "grade": "B+",
-      "category": "전공필수"
+      "gradePoint": 3.5,
+      "departmentCode": "CSE"
     },
     {
-      "name": "웹프로그래밍",
+      "courseCode": "CSE301",
+      "courseName": "웹프로그래밍",
+      "courseType": "전공선택",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 3,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "A+",
-      "category": "전공선택"
+      "gradePoint": 4.5,
+      "departmentCode": "CSE"
     },
     {
-      "name": "머신러닝",
+      "courseCode": "CSE302",
+      "courseName": "머신러닝",
+      "courseType": "전공선택",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 3,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "A",
-      "category": "전공선택"
+      "gradePoint": 4.0,
+      "departmentCode": "CSE"
     },
     {
-      "name": "소프트웨어공학",
+      "courseCode": "CSE303",
+      "courseName": "소프트웨어공학",
+      "courseType": "전공필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 3,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "A",
-      "category": "전공필수"
+      "gradePoint": 4.0,
+      "departmentCode": "CSE"
     },
     {
-      "name": "영어작문",
+      "courseCode": "GEN101",
+      "courseName": "영어작문",
+      "courseType": "교양필수",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 2,
-      "year": 1,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "B+",
-      "category": "교양"
+      "gradePoint": 3.5,
+      "departmentCode": "GEN"
     },
     {
-      "name": "창의적사고",
+      "courseCode": "GEN102",
+      "courseName": "창의적사고",
+      "courseType": "교양선택",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 2,
-      "year": 1,
-      "semester": "2학기",
+      "evaluationType": "절대평가",
       "grade": "A",
-      "category": "교양"
+      "gradePoint": 4.0,
+      "departmentCode": "GEN"
     },
     {
-      "name": "기술창업",
+      "courseCode": "GEN201",
+      "courseName": "기술창업",
+      "courseType": "교양선택",
+      "teachingArea": null,
+      "selectedArea": null,
       "credits": 2,
-      "year": 2,
-      "semester": "2학기",
+      "evaluationType": "절대평가",
       "grade": "A+",
-      "category": "교양"
+      "gradePoint": 4.5,
+      "departmentCode": "GEN"
     }
   ],
-  "totalCredits": 34,
-  "majorCredits": 27,
-  "generalCredits": 6
+  "totalCredits": 33,
+  "totalMajorCredits": 27,
+  "totalGeneralCredits": 6,
+  "averageGPA": 3.97
 }
