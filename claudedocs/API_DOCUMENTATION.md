@@ -106,33 +106,36 @@ POST /api/parse-excel
 {
   "success": true,
   "data": {
-    "studentInfo": {
-      "name": "홍길동",
-      "studentId": "20201234",
-      "major": "컴퓨터공학과",
-      "year": 3
-    },
     "courses": [
       {
-        "name": "데이터구조",
+        "courseCode": "CSE201",
+        "courseName": "데이터구조",
+        "courseType": "전공필수",
+        "physicalArea": null,
+        "selectedArea": null,
         "credits": 3,
-        "year": 2,
-        "semester": "1학기",
+        "evaluationType": "절대평가",
         "grade": "A+",
-        "category": "전공필수"
+        "gradePoint": 4.5,
+        "departmentCode": "CSE"
       },
       {
-        "name": "알고리즘",
+        "courseCode": "CSE202",
+        "courseName": "알고리즘",
+        "courseType": "전공필수",
+        "physicalArea": null,
+        "selectedArea": null,
         "credits": 3,
-        "year": 2,
-        "semester": "2학기",
-        "grade": "A0",
-        "category": "전공필수"
+        "evaluationType": "절대평가",
+        "grade": "A",
+        "gradePoint": 4.0,
+        "departmentCode": "CSE"
       }
     ],
     "totalCredits": 75,
-    "majorCredits": 45,
-    "generalCredits": 30
+    "totalMajorCredits": 45,
+    "totalGeneralCredits": 30,
+    "averageGPA": 4.25
   },
   "message": "성적표 파싱 완료"
 }
@@ -185,25 +188,24 @@ POST /api/generate-roadmap
 ```json
 {
   "transcript": {
-    "studentInfo": {
-      "name": "홍길동",
-      "studentId": "20201234",
-      "major": "컴퓨터공학과",
-      "year": 3
-    },
     "courses": [
       {
-        "name": "데이터구조",
+        "courseCode": "CSE201",
+        "courseName": "데이터구조",
+        "courseType": "전공필수",
+        "physicalArea": null,
+        "selectedArea": null,
         "credits": 3,
-        "year": 2,
-        "semester": "1학기",
+        "evaluationType": "절대평가",
         "grade": "A+",
-        "category": "전공필수"
+        "gradePoint": 4.5,
+        "departmentCode": "CSE"
       }
     ],
     "totalCredits": 75,
-    "majorCredits": 45,
-    "generalCredits": 30
+    "totalMajorCredits": 45,
+    "totalGeneralCredits": 30,
+    "averageGPA": 4.25
   },
   "careerGoal": {
     "careerPath": "백엔드 개발자",
@@ -319,25 +321,22 @@ curl -X POST http://localhost:8000/api/generate-roadmap \
   -H "Content-Type: application/json" \
   -d '{
     "transcript": {
-      "studentInfo": {
-        "name": "홍길동",
-        "studentId": "20201234",
-        "major": "컴퓨터공학과",
-        "year": 3
-      },
       "courses": [
         {
-          "name": "데이터구조",
+          "courseCode": "CSE201",
+          "courseName": "데이터구조",
+          "courseType": "전공필수",
           "credits": 3,
-          "year": 2,
-          "semester": "1학기",
+          "evaluationType": "절대평가",
           "grade": "A+",
-          "category": "전공필수"
+          "gradePoint": 4.5,
+          "departmentCode": "CSE"
         }
       ],
       "totalCredits": 75,
-      "majorCredits": 45,
-      "generalCredits": 30
+      "totalMajorCredits": 45,
+      "totalGeneralCredits": 30,
+      "averageGPA": 4.25
     },
     "careerGoal": {
       "careerPath": "백엔드 개발자",
@@ -351,53 +350,37 @@ curl -X POST http://localhost:8000/api/generate-roadmap \
 
 ## 데이터 모델
 
-### StudentInfo
-
-학생 정보
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | string | ❌ | 학생 이름 |
-| `studentId` | string | ❌ | 학번 |
-| `major` | string | ❌ | 전공 |
-| `year` | integer | ❌ | 학년 (1-4) |
-
-**Example:**
-
-```json
-{
-  "name": "홍길동",
-  "studentId": "20201234",
-  "major": "컴퓨터공학과",
-  "year": 3
-}
-```
-
----
-
 ### Course
 
-과목 정보
+과목 정보 (엑셀 파싱 결과)
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `name` | string | ✅ | 과목명 |
+| `courseCode` | string | ✅ | 학수번호 |
+| `courseName` | string | ✅ | 교과목명 |
+| `courseType` | string | ✅ | 이수구분 (전공필수, 전공선택, 교양필수, 교양선택 등) |
+| `physicalArea` | string | ❌ | 피직영역 |
+| `selectedArea` | string | ❌ | 선택영역 |
 | `credits` | number | ✅ | 학점 |
-| `year` | integer | ❌ | 이수 학년 |
-| `semester` | string | ❌ | 이수 학기 (예: "1학기", "2학기") |
-| `grade` | string | ❌ | 성적 (예: "A+", "A0", "B+") |
-| `category` | string | ❌ | 과목 구분 (예: "전공필수", "전공선택", "교양") |
+| `evaluationType` | string | ✅ | 평가방식 (절대평가, 상대평가 등) |
+| `grade` | string | ✅ | 등급 (A+, A, B+ 등) |
+| `gradePoint` | number | ✅ | 평점 (4.5, 4.0 등) |
+| `departmentCode` | string | ❌ | 개설학과코드 |
 
 **Example:**
 
 ```json
 {
-  "name": "데이터구조",
+  "courseCode": "CSE101",
+  "courseName": "데이터구조",
+  "courseType": "전공필수",
+  "physicalArea": null,
+  "selectedArea": null,
   "credits": 3,
-  "year": 2,
-  "semester": "1학기",
+  "evaluationType": "절대평가",
   "grade": "A+",
-  "category": "전공필수"
+  "gradePoint": 4.5,
+  "departmentCode": "CSE"
 }
 ```
 
@@ -409,35 +392,34 @@ curl -X POST http://localhost:8000/api/generate-roadmap \
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `studentInfo` | StudentInfo | ❌ | 학생 정보 |
 | `courses` | Course[] | ✅ | 이수 과목 리스트 (최소 1개) |
 | `totalCredits` | number | ✅ | 총 이수 학점 |
-| `majorCredits` | number | ❌ | 전공 학점 |
-| `generalCredits` | number | ❌ | 교양 학점 |
+| `totalMajorCredits` | number | ❌ | 전공 총 학점 |
+| `totalGeneralCredits` | number | ❌ | 교양 총 학점 |
+| `averageGPA` | number | ❌ | 평균 평점 (4.5 만점) |
 
 **Example:**
 
 ```json
 {
-  "studentInfo": {
-    "name": "홍길동",
-    "studentId": "20201234",
-    "major": "컴퓨터공학과",
-    "year": 3
-  },
   "courses": [
     {
-      "name": "데이터구조",
+      "courseCode": "CSE201",
+      "courseName": "데이터구조",
+      "courseType": "전공필수",
+      "physicalArea": null,
+      "selectedArea": null,
       "credits": 3,
-      "year": 2,
-      "semester": "1학기",
+      "evaluationType": "절대평가",
       "grade": "A+",
-      "category": "전공필수"
+      "gradePoint": 4.5,
+      "departmentCode": "CSE"
     }
   ],
   "totalCredits": 75,
-  "majorCredits": 45,
-  "generalCredits": 30
+  "totalMajorCredits": 45,
+  "totalGeneralCredits": 30,
+  "averageGPA": 4.25
 }
 ```
 
