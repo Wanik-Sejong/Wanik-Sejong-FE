@@ -1,8 +1,54 @@
-# 완익세종 (Wanik-Sejong)
+<div align="center">
 
-> AI 기반 진로-교과목 로드맵 추천 서비스
+<img src="docs/screenshots/03-roadmap.jpg" alt="완익세종 로드맵 결과 화면" width="760" />
 
-세종대학교 학생들을 위한 맞춤형 학습 로드맵 생성 시스템입니다. 성적표와 희망 진로를 입력하면 Google Gemini AI가 개인화된 학습 경로를 추천합니다.
+# 🎓 완익세종 (Wanik-Sejong)
+
+**AI 기반 진로-교과목 로드맵 추천 서비스**
+
+성적표를 올리고 희망 진로를 적으면, AI가 학기별 과목과 방학 활동까지 담은 나만의 로드맵을 만들어 줍니다.
+
+🏆 **제13회 세종대학교 SW-AI 해커톤 장려상** · 팀 **완익세종**
+
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Gemini](https://img.shields.io/badge/Google_Gemini-2.0_Flash-8E75B2?logo=googlegemini&logoColor=white)
+
+</div>
+
+---
+
+## 💡 왜 만들었나
+
+> "AI 엔지니어가 되고 싶은데, 어떤 과목을 들어야 하지?"<br />
+> "선후수 관계는 어떻게 되지?"<br />
+> "방학에는 뭘 해야 취업에 도움이 될까?"
+
+저희 팀도, 주변 친구들도 하던 고민입니다. 세종대 학생들은 수강편람을 일일이 찾아보거나 선배에게 묻고, 방학 계획은 막연하게 세우곤 합니다. 완익세종은 이 과정을 **세 단계**로 줄였습니다.
+
+| 1. 성적표 업로드 | 2. 진로 입력 | 3. AI 로드맵 |
+|:---:|:---:|:---:|
+| 포털에서 받은 기이수성적 Excel을 드래그 앤 드롭 | 희망 진로·관심 분야·목표를 자유롭게 작성 | 역량 분석 + 학기별 과목 + 방학 활동 + 추천 기술스택 |
+
+## 📸 화면
+
+| 시작 화면 | 진로 입력 |
+|:---:|:---:|
+| <img src="docs/screenshots/01-home.jpg" alt="시작 화면" /> | <img src="docs/screenshots/02-career-input.jpg" alt="진로 입력" /> |
+| **현재 역량 분석** | **추천 학습 경로** |
+| <img src="docs/screenshots/04-skills.jpg" alt="현재 역량 분석" /> | <img src="docs/screenshots/05-timeline.jpg" alt="추천 학습 경로" /> |
+| **학기별 상세 과목** | **로드맵 결과** |
+| <img src="docs/screenshots/06-courses.jpg" alt="학기별 상세 과목" /> | <img src="docs/screenshots/03-roadmap.jpg" alt="로드맵 결과" /> |
+
+<sub>스크린샷은 Mock 모드(테스트 데이터)로 촬영했습니다. 만든 로드맵은 체크리스트가 포함된 Markdown 파일로 저장할 수 있습니다.</sub>
+
+## 👥 팀 완익세종
+
+- **홍의민** — 프론트엔드 (Next.js 화면 · API Routes · AI 챗봇 세박사 · 백엔드 연동)
+- **이정연**
+- **박성열**
 
 ---
 
@@ -490,7 +536,7 @@ Google Gemini 기반 자연어 대화 및 과목 검색
 
 - **프로젝트**: 완익세종 (Wanik-Sejong)
 - **목적**: 세종대학교 해커톤 프로젝트
-- **팀**: [Your Team Name]
+- **팀**: 완익세종 (홍의민 · 이정연 · 박성열)
 
 ---
 
